@@ -19,7 +19,6 @@ import static com.dongbat.jbump.Rect.*;
 import static com.dongbat.jbump.Grid.*;
 import static java.lang.Math.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 
 /**
@@ -32,24 +31,6 @@ public class World {
 
     public Item item;
     public Float weight;
-  }
-
-  private static boolean sortByWeight(ItemInfo a, ItemInfo b) {
-    return a.weight < b.weight;
-  }
-
-  private static boolean sortByTiAndDistance(Collision a, Collision b) {
-    if (a.ti == b.ti) {
-      Rect ir = a.itemRect;
-      Rect ar = a.otherRect;
-      Rect br = b.otherRect;
-
-      float ad = rect_getSquareDistance(ir.x, ir.y, ir.w, ir.h, ar.x, ar.y, ar.w, ar.h);
-      float bd = rect_getSquareDistance(ir.x, ir.y, ir.w, ir.h, br.x, br.y, br.w, br.h);
-
-      return ad < bd;
-    }
-    return a.ti < b.ti;
   }
 
   private HashMap<Float, HashMap<Float, Cell>> rows = new HashMap<Float, HashMap<Float, Cell>>();
@@ -143,16 +124,15 @@ public class World {
     return result;
   }
 
-  public ArrayList<Collision> project(Item item, float x, float y, float w, float h, float goalX, float goalY, ArrayList<Collision> collisions) {
+  public Collisions project(Item item, float x, float y, float w, float h, float goalX, float goalY, Collisions collisions) {
     return project(item, x, y, w, h, goalX, goalY, CollisionFilter.defaultFilter, collisions);
   }
 
   private static final ArrayList<Item> project_visited = new ArrayList<Item>();
   private static final Rect project_c = new Rect();
   private static final HashMap<Item, Boolean> project_dictItemsInCellRect = new HashMap<Item, Boolean>();
-  private static final Collision project_collision = new Collision();
 
-  public ArrayList<Collision> project(Item item, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, ArrayList<Collision> collisions) {
+  public Collisions project(Item item, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Collisions collisions) {
     collisions.clear();
     ArrayList<Item> visited = project_visited;
     visited.clear();
@@ -177,29 +157,15 @@ public class World {
         if (response != null) {
           Rect o = getRect(other);
           float ox = o.x, oy = o.y, ow = o.w, oh = o.h;
-          boolean collided = rect_detectCollision(x, y, w, h, ox, oy, ow, oh, goalX, goalY, project_collision);
-          Collision col = project_collision;
+          Collision col = rect_detectCollision(x, y, w, h, ox, oy, ow, oh, goalX, goalY);
 
-          if (collided) {
-            col.item = item;
-            col.other = other;
-            col.type = response;
-
-            collisions.add(col);
+          if (col != null) {
+            collisions.add(col.overlaps, col.ti, col.move.x, col.move.y, col.normal.x, col.normal.y, col.touch.x, col.touch.y, col.itemRect.x, col.itemRect.y, col.itemRect.w, col.itemRect.h, col.otherRect.x, col.otherRect.y, col.otherRect.w, col.otherRect.h, item, other, response);
           }
         }
       }
     }
-    collisions.sort(new Comparator<Collision>() {
-      @Override
-      public int compare(Collision o1, Collision o2) {
-        if (sortByTiAndDistance(o1, o2)) {
-          return -1;
-        } else {
-          return 1;
-        }
-      }
-    });
+    collisions.sort();
     return collisions;
   }
 
@@ -284,6 +250,7 @@ public class World {
     Rect rect = getRect(item);
     float x1 = rect.x, y1 = rect.y, w1 = rect.w, h1 = rect.h;
     if (x1 != x2 || y1 != y2 || w1 != w2 || h1 != h2) {
+
       Rect c1 = grid_toCellRect(cellSize, x1, y1, w1, h1, update_c1);
       Rect c2 = grid_toCellRect(cellSize, x2, y2, w2, h2, update_c2);
 
@@ -313,14 +280,13 @@ public class World {
           }
         }
       }
-
       rect.set(x2, y2, w2, h2);
     }
   }
 
   private static final ArrayList<Item> check_visited = new ArrayList<Item>();
-  private static final ArrayList<Collision> check_cols = new ArrayList<Collision>();
-  private static final ArrayList<Collision> check_projectedCols = new ArrayList<Collision>();
+  private static final Collisions check_cols = new Collisions();
+  private static final Collisions check_projectedCols = new Collisions();
   private static final Response.Result check_result = new Response.Result();
 
   public Response.Result check(Item item, float goalX, float goalY, final CollisionFilter filter) {
@@ -343,13 +309,13 @@ public class World {
 
     Rect rect = getRect(item);
     float x = rect.x, y = rect.y, w = rect.w, h = rect.h;
-    ArrayList<Collision> cols = check_cols;
+    Collisions cols = check_cols;
     cols.clear();
-    ArrayList<Collision> projectedCols = project(item, x, y, w, h, goalX, goalY, filter, check_projectedCols);
+    Collisions projectedCols = project(item, x, y, w, h, goalX, goalY, filter, check_projectedCols);
     Response.Result result = check_result;
     while (projectedCols != null && !projectedCols.isEmpty()) {
       Collision col = projectedCols.get(0);
-      cols.add(col);
+      cols.add(col.overlaps, col.ti, col.move.x, col.move.y, col.normal.x, col.normal.y, col.touch.x, col.touch.y, col.itemRect.x, col.itemRect.y, col.itemRect.w, col.itemRect.h, col.otherRect.x, col.otherRect.y, col.otherRect.w, col.otherRect.h, col.item, col.other, col.type);
 
       visited.add(col.other);
 

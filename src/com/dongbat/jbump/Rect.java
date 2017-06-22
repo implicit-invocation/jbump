@@ -139,12 +139,14 @@ public class Rect {
   private static final Point rect_detectCollision_getSegmentIntersectionIndices_ti = new Point();
   private static final Point rect_detectCollision_getSegmentIntersectionIndices_n1 = new Point();
   private static final Point rect_detectCollision_getSegmentIntersectionIndices_n2 = new Point();
+  private static final Collision rect_detectCollision_getSegmentIntersectionIndices_col = new Collision();
 
-  public static boolean rect_detectCollision(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2,
-    float goalX, float goalY, Collision collision) {
+  public static Collision rect_detectCollision(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2,
+    float goalX, float goalY) {
+    Collision col = rect_detectCollision_getSegmentIntersectionIndices_col;
     float dx = goalX - x1;
     float dy = goalY - y1;
-
+    
     rect_getDiff(x1, y1, w1, h1, x2, y2, w2, h2, rect_detectCollision_diff);
     float x = rect_detectCollision_diff.x;
     float y = rect_detectCollision_diff.y;
@@ -179,7 +181,7 @@ public class Rect {
       }
     }
     if (ti == null) {
-      return false;
+      return null;
     }
     float tx, ty;
     
@@ -203,7 +205,7 @@ public class Rect {
         nx = rect_detectCollision_getSegmentIntersectionIndices_n1.x;
         ny = rect_detectCollision_getSegmentIntersectionIndices_n1.y;
         if(!intersect) {
-          return false;
+          return null;
         }
         tx = x1 + dx * ti1;
         ty = y1 + dy * ti1;
@@ -212,8 +214,8 @@ public class Rect {
       tx = x1 + dx * ti;
       ty = y1 + dy * ti;
     }
-    collision.set(overlaps, ti, dx, dy, nx, ny, tx, ty, x1, y1, w1, h1, x2, y2, w2, h2);
-    return true;
+    col.set(overlaps, ti, dx, dy, nx, ny, tx, ty, x1, y1, w1, h1, x2, y2, w2, h2);
+    return col;
   }
   
 }

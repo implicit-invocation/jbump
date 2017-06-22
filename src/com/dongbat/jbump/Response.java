@@ -29,16 +29,16 @@ public interface Response {
 
     public float goalX;
     public float goalY;
-    public ArrayList<Collision> projectedCollisions;
+    public Collisions projectedCollisions;
 
-    public void set(float goalX, float goalY, ArrayList<Collision> projectedCollisions) {
+    public void set(float goalX, float goalY, Collisions projectedCollisions) {
       this.goalX = goalX;
       this.goalY = goalY;
       this.projectedCollisions = projectedCollisions;
     }
   }
   
-  public static final ArrayList<Collision> collisions = new ArrayList<Collision>();
+  public static final Collisions collisions = new Collisions();
 
   public static Response slide = new Response() {
     @Override
