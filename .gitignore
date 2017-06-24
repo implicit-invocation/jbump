@@ -1,2 +1,5 @@
 nbproject
 .DS_Store
+/.nb-gradle/
+/build
+/.gradle

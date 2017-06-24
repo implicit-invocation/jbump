@@ -39,6 +39,10 @@ public class Collisions {
   public ArrayList<Item> others = new ArrayList<Item>();
   public ArrayList<Response> types = new ArrayList<Response>();
   private int size = 0;
+  
+  public void add(Collision col) {
+    add(col.overlaps, col.ti, col.move.x, col.move.y, col.normal.x, col.normal.y, col.touch.x, col.touch.y, col.itemRect.x, col.itemRect.y, col.itemRect.w, col.itemRect.h, col.otherRect.x, col.otherRect.y, col.otherRect.w, col.otherRect.h, col.item, col.other, col.type);
+  }
 
   public void add(boolean overlap, float ti, float moveX, float moveY, float normalX, float normalY, float touchX, float touchY,
     float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2, Item item, Item other, Response type) {
