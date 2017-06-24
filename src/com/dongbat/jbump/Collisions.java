@@ -226,22 +226,10 @@ public class Collisions {
     }
     order.sort(orderComparator);
     keySort(order, overlaps);
-    keySort(order,
-      tis,
-      moveXs,
-      moveYs,
-      normalXs,
-      normalYs,
-      touchXs,
-      touchYs,
-      x1s,
-      y1s,
-      w1s,
-      h1s,
-      x2s,
-      y2s,
-      w2s,
-      h2s);
+    keySort(order, tis, moveXs, moveYs);
+    keySort(order, normalXs, normalYs, touchXs, touchYs);
+    keySort(order, x1s, y1s, w1s, h1s);
+    keySort(order, x2s, y2s, w2s, h2s);
     keySort(order, items, others, types);
   }
 
