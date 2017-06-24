@@ -79,17 +79,17 @@ public class Collisions {
     types.add(type);
   }
 
-  private static final Collision COLLISION = new Collision();
+  private final Collision collision = new Collision();
 
   public Collision get(int index) {
     if (index >= size) {
       return null;
     }
-    COLLISION.set(overlaps.get(index), tis.get(index), moveXs.get(index), moveYs.get(index), normalXs.get(index), normalYs.get(index), touchXs.get(index), touchYs.get(index), x1s.get(index), y1s.get(index), w1s.get(index), h1s.get(index), x2s.get(index), y2s.get(index), w2s.get(index), h2s.get(index));
-    COLLISION.item = items.get(index);
-    COLLISION.other = others.get(index);
-    COLLISION.type = types.get(index);
-    return COLLISION;
+    collision.set(overlaps.get(index), tis.get(index), moveXs.get(index), moveYs.get(index), normalXs.get(index), normalYs.get(index), touchXs.get(index), touchYs.get(index), x1s.get(index), y1s.get(index), w1s.get(index), h1s.get(index), x2s.get(index), y2s.get(index), w2s.get(index), h2s.get(index));
+    collision.item = items.get(index);
+    collision.other = others.get(index);
+    collision.type = types.get(index);
+    return collision;
   }
 
   public void remove(int index) {

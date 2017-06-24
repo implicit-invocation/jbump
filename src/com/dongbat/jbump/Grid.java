@@ -50,12 +50,12 @@ public class Grid {
     public void onTraverse(float cx, float cy);
   }
 
-  private static final Point grid_traverse_c1 = new Point();
-  private static final Point grid_traverse_c2 = new Point();
-  private static final Point grid_traverse_initStepX = new Point();
-  private static final Point grid_traverse_initStepY = new Point();
+  private final Point grid_traverse_c1 = new Point();
+  private final Point grid_traverse_c2 = new Point();
+  private final Point grid_traverse_initStepX = new Point();
+  private final Point grid_traverse_initStepY = new Point();
 
-  public static void grid_traverse(float cellSize, float x1, float y1, float x2, float y2, TraverseCallback f) {
+  public void grid_traverse(float cellSize, float x1, float y1, float x2, float y2, TraverseCallback f) {
     grid_toCell(cellSize, x1, y1, grid_traverse_c1);
     float cx1 = grid_traverse_c1.x;
     float cy1 = grid_traverse_c1.y;
@@ -92,9 +92,9 @@ public class Grid {
     }
   }
 
-  private static final Point grid_toCellRect_cxy = new Point();
+  private final Point grid_toCellRect_cxy = new Point();
 
-  public static Rect grid_toCellRect(float cellSize, float x, float y, float w, float h, Rect rect) {
+  public Rect grid_toCellRect(float cellSize, float x, float y, float w, float h, Rect rect) {
     grid_toCell(cellSize, x, y, grid_toCellRect_cxy);
     float cx = grid_toCellRect_cxy.x;
     float cy = grid_toCellRect_cxy.y;

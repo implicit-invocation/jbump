@@ -15,8 +15,6 @@
  */
 package com.dongbat.jbump;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author tao
@@ -29,18 +27,15 @@ public interface Response {
 
     public float goalX;
     public float goalY;
-    public Collisions projectedCollisions;
+    public Collisions projectedCollisions = new Collisions();
 
-    public void set(float goalX, float goalY, Collisions projectedCollisions) {
+    public void set(float goalX, float goalY) {
       this.goalX = goalX;
       this.goalY = goalY;
-      this.projectedCollisions = projectedCollisions;
     }
   }
   
-  public static final Collisions collisions = new Collisions();
-
-  public static Response slide = new Response() {
+  public Response slide = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
       Point tch = collision.touch;
@@ -58,27 +53,28 @@ public interface Response {
       y = tch.y;
       goalX = sx;
       goalY = sy;
-      
-      world.project(collision.item, x, y, w, h, goalX, goalY, filter, collisions);
-      result.set(goalX, goalY, collisions);
+      result.projectedCollisions.clear();
+      world.project(collision.item, x, y, w, h, goalX, goalY, filter, result.projectedCollisions);
+      result.set(goalX, goalY);
       return result;
     }
   };
 
-  public static Response touch = new Response() {
+  public Response touch = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
-      collisions.clear();
-      result.set(collision.touch.x, collision.touch.y, collisions);
+      result.projectedCollisions.clear();
+      result.set(collision.touch.x, collision.touch.y);
       return result;
     }
   };
 
-  public static Response cross = new Response() {
+  public Response cross = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
-      world.project(collision.item, x, y, w, h, goalX, goalY, filter, collisions);
-      result.set(goalX, goalY, collisions);
+      result.projectedCollisions.clear();
+      world.project(collision.item, x, y, w, h, goalX, goalY, filter, result.projectedCollisions);
+      result.set(goalX, goalY);
       return result;
     }
   };
