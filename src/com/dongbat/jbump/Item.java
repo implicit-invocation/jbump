@@ -19,7 +19,14 @@ package com.dongbat.jbump;
  *
  * @author tao
  */
-public class Item {
+public class Item<E> {
 
-  public Object userData;
+  public E userData;
+
+  public Item() {
+  }
+
+  public Item(E userData) {
+    this.userData = userData;
+  }
 }

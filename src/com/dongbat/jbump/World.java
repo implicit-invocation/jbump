@@ -25,18 +25,12 @@ import java.util.HashMap;
  *
  * @author tao
  */
-public class World {
-
-  public static class ItemInfo {
-
-    public Item item;
-    public Float weight;
-  }
+public class World<E> {
 
   private HashMap<Float, HashMap<Float, Cell>> rows = new HashMap<Float, HashMap<Float, Cell>>();
   private HashMap<Cell, Boolean> nonEmptyCells = new HashMap<Cell, Boolean>();
 
-  private void addItemToCell(Item item, float cx, float cy) {
+  private void addItemToCell(Item<E> item, float cx, float cy) {
     if (!rows.containsKey(cy)) {
       rows.put(cy, new HashMap<Float, Cell>());
     }
@@ -205,7 +199,7 @@ public class World {
 
   private static final Rect add_c = new Rect();
 
-  public Item add(Item item, float x, float y, float w, float h) {
+  public Item<E> add(Item<E> item, float x, float y, float w, float h) {
     if (rects.containsKey(item)) {
       return item;
     }
