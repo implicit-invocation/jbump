@@ -1,17 +1,28 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2017 DongBat.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.dongbat.jbump;
 
 import static com.dongbat.jbump.Rect.rect_getSquareDistance;
+import com.dongbat.jbump.util.BooleanArray;
+import com.dongbat.jbump.util.FloatArray;
+import com.dongbat.jbump.util.IntIntMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -19,27 +30,27 @@ import java.util.Map;
  */
 public class Collisions {
 
-  private final ArrayList<Boolean> overlaps = new ArrayList<Boolean>();
-  private final ArrayList<Float> tis = new ArrayList<Float>();
-  private final ArrayList<Float> moveXs = new ArrayList<Float>();
-  private final ArrayList<Float> moveYs = new ArrayList<Float>();
-  private final ArrayList<Float> normalXs = new ArrayList<Float>();
-  private final ArrayList<Float> normalYs = new ArrayList<Float>();
-  private final ArrayList<Float> touchXs = new ArrayList<Float>();
-  private final ArrayList<Float> touchYs = new ArrayList<Float>();
-  private final ArrayList<Float> x1s = new ArrayList<Float>();
-  private final ArrayList<Float> y1s = new ArrayList<Float>();
-  private final ArrayList<Float> w1s = new ArrayList<Float>();
-  private final ArrayList<Float> h1s = new ArrayList<Float>();
-  private final ArrayList<Float> x2s = new ArrayList<Float>();
-  private final ArrayList<Float> y2s = new ArrayList<Float>();
-  private final ArrayList<Float> w2s = new ArrayList<Float>();
-  private final ArrayList<Float> h2s = new ArrayList<Float>();
+  private final BooleanArray overlaps = new BooleanArray();
+  private final FloatArray tis = new FloatArray();
+  private final FloatArray moveXs = new FloatArray();
+  private final FloatArray moveYs = new FloatArray();
+  private final FloatArray normalXs = new FloatArray();
+  private final FloatArray normalYs = new FloatArray();
+  private final FloatArray touchXs = new FloatArray();
+  private final FloatArray touchYs = new FloatArray();
+  private final FloatArray x1s = new FloatArray();
+  private final FloatArray y1s = new FloatArray();
+  private final FloatArray w1s = new FloatArray();
+  private final FloatArray h1s = new FloatArray();
+  private final FloatArray x2s = new FloatArray();
+  private final FloatArray y2s = new FloatArray();
+  private final FloatArray w2s = new FloatArray();
+  private final FloatArray h2s = new FloatArray();
   public ArrayList<Item> items = new ArrayList<Item>();
   public ArrayList<Item> others = new ArrayList<Item>();
   public ArrayList<Response> types = new ArrayList<Response>();
   private int size = 0;
-  
+
   public void add(Collision col) {
     add(col.overlaps, col.ti, col.move.x, col.move.y, col.normal.x, col.normal.y, col.touch.x, col.touch.y, col.itemRect.x, col.itemRect.y, col.itemRect.w, col.itemRect.h, col.otherRect.x, col.otherRect.y, col.otherRect.w, col.otherRect.h, col.item, col.other, col.type);
   }
@@ -84,22 +95,22 @@ public class Collisions {
   public void remove(int index) {
     if (index < size) {
       size--;
-      overlaps.remove(index);
-      tis.remove(index);
-      moveXs.remove(index);
-      moveYs.remove(index);
-      normalXs.remove(index);
-      normalYs.remove(index);
-      touchXs.remove(index);
-      touchYs.remove(index);
-      x1s.remove(index);
-      y1s.remove(index);
-      w1s.remove(index);
-      h1s.remove(index);
-      x2s.remove(index);
-      y2s.remove(index);
-      w2s.remove(index);
-      h2s.remove(index);
+      overlaps.removeIndex(index);
+      tis.removeIndex(index);
+      moveXs.removeIndex(index);
+      moveYs.removeIndex(index);
+      normalXs.removeIndex(index);
+      normalYs.removeIndex(index);
+      touchXs.removeIndex(index);
+      touchYs.removeIndex(index);
+      x1s.removeIndex(index);
+      y1s.removeIndex(index);
+      w1s.removeIndex(index);
+      h1s.removeIndex(index);
+      x2s.removeIndex(index);
+      y2s.removeIndex(index);
+      w2s.removeIndex(index);
+      h2s.removeIndex(index);
       items.remove(index);
       others.remove(index);
       types.remove(index);
@@ -149,22 +160,61 @@ public class Collisions {
     }
   };
 
+  private static final IntIntMap swapMap = new IntIntMap();
+
   public static <T extends Comparable<T>> void keySort(
     final List<Integer> indices, List<?>... lists) {
-    Map<Integer, Integer> swapMap = new HashMap<Integer, Integer>(indices.size());
-
+    swapMap.clear();
     for (int i = 0; i < indices.size(); i++) {
       int k = indices.get(i);
       while (swapMap.containsKey(k)) {
-        k = swapMap.get(k);
+        k = swapMap.get(k, 0);
       }
 
       swapMap.put(i, k);
     }
 
-    for (Map.Entry<Integer, Integer> e : swapMap.entrySet()) {
+    for (IntIntMap.Entry e : swapMap) {
       for (List<?> list : lists) {
-        Collections.swap(list, e.getKey(), e.getValue());
+        Collections.swap(list, e.key, e.value);
+      }
+    }
+  }
+
+  public static <T extends Comparable<T>> void keySort(
+    final List<Integer> indices, FloatArray... lists) {
+    swapMap.clear();
+    for (int i = 0; i < indices.size(); i++) {
+      int k = indices.get(i);
+      while (swapMap.containsKey(k)) {
+        k = swapMap.get(k, 0);
+      }
+
+      swapMap.put(i, k);
+    }
+
+    for (IntIntMap.Entry e : swapMap) {
+      for (FloatArray list : lists) {
+        list.swap(e.key, e.value);
+      }
+    }
+  }
+
+  public static <T extends Comparable<T>> void keySort(
+    final List<Integer> indices, BooleanArray... lists) {
+    swapMap.clear();
+    for (int i = 0; i < indices.size(); i++) {
+      int k = indices.get(i);
+      while (swapMap.containsKey(k)) {
+        k = swapMap.get(k, 0);
+      }
+
+      swapMap.put(i, k);
+    }
+
+    for (IntIntMap.Entry e : swapMap) {
+      for (BooleanArray list : lists) {
+        list.swap(e.key, e.value);
       }
     }
   }
@@ -175,7 +225,8 @@ public class Collisions {
       order.add(i);
     }
     order.sort(orderComparator);
-    keySort(order, overlaps,
+    keySort(order, overlaps);
+    keySort(order,
       tis,
       moveXs,
       moveYs,
@@ -190,14 +241,12 @@ public class Collisions {
       x2s,
       y2s,
       w2s,
-      h2s,
-      items,
-      others,
-      types);
+      h2s);
+    keySort(order, items, others, types);
   }
 
   private boolean sortByTiAndDistance(int a, int b) {
-    if (tis.get(a).equals(tis.get(b))) {
+    if (tis.get(a) == (tis.get(b))) {
 
       float ad = rect_getSquareDistance(x1s.get(a), y1s.get(a), w1s.get(a), h1s.get(a), x2s.get(a), y2s.get(a), w2s.get(a), h2s.get(a));
       float bd = rect_getSquareDistance(x1s.get(a), y1s.get(a), w1s.get(a), h1s.get(a), x2s.get(b), y2s.get(b), w2s.get(b), h2s.get(b));
