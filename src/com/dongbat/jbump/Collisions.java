@@ -218,7 +218,7 @@ public class Collisions {
     for (int i = 0; i < size; i++) {
       order.add(i);
     }
-    order.sort(orderComparator);
+    Collections.sort(order, orderComparator);
     keySort(order, overlaps);
     keySort(order, tis);
     keySort(order, moveXs);
