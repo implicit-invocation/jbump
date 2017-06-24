@@ -163,7 +163,7 @@ public class Collisions {
   private static final IntIntMap swapMap = new IntIntMap();
 
   public static <T extends Comparable<T>> void keySort(
-    final List<Integer> indices, List<?>... lists) {
+    final List<Integer> indices, List<?> list) {
     swapMap.clear();
     for (int i = 0; i < indices.size(); i++) {
       int k = indices.get(i);
@@ -175,14 +175,12 @@ public class Collisions {
     }
 
     for (IntIntMap.Entry e : swapMap) {
-      for (List<?> list : lists) {
-        Collections.swap(list, e.key, e.value);
-      }
+      Collections.swap(list, e.key, e.value);
     }
   }
 
   public static <T extends Comparable<T>> void keySort(
-    final List<Integer> indices, FloatArray... lists) {
+    final List<Integer> indices, FloatArray list) {
     swapMap.clear();
     for (int i = 0; i < indices.size(); i++) {
       int k = indices.get(i);
@@ -194,14 +192,12 @@ public class Collisions {
     }
 
     for (IntIntMap.Entry e : swapMap) {
-      for (FloatArray list : lists) {
-        list.swap(e.key, e.value);
-      }
+      list.swap(e.key, e.value);
     }
   }
 
   public static <T extends Comparable<T>> void keySort(
-    final List<Integer> indices, BooleanArray... lists) {
+    final List<Integer> indices, BooleanArray list) {
     swapMap.clear();
     for (int i = 0; i < indices.size(); i++) {
       int k = indices.get(i);
@@ -213,9 +209,7 @@ public class Collisions {
     }
 
     for (IntIntMap.Entry e : swapMap) {
-      for (BooleanArray list : lists) {
-        list.swap(e.key, e.value);
-      }
+      list.swap(e.key, e.value);
     }
   }
 
@@ -226,11 +220,24 @@ public class Collisions {
     }
     order.sort(orderComparator);
     keySort(order, overlaps);
-    keySort(order, tis, moveXs, moveYs);
-    keySort(order, normalXs, normalYs, touchXs, touchYs);
-    keySort(order, x1s, y1s, w1s, h1s);
-    keySort(order, x2s, y2s, w2s, h2s);
-    keySort(order, items, others, types);
+    keySort(order, tis);
+    keySort(order, moveXs);
+    keySort(order, moveYs);
+    keySort(order, normalXs);
+    keySort(order, normalYs);
+    keySort(order, touchXs);
+    keySort(order, touchYs);
+    keySort(order, x1s);
+    keySort(order, y1s);
+    keySort(order, w1s);
+    keySort(order, h1s);
+    keySort(order, x2s);
+    keySort(order, y2s);
+    keySort(order, w2s);
+    keySort(order, h2s);
+    keySort(order, items);
+    keySort(order, others);
+    keySort(order, types);
   }
 
   private boolean sortByTiAndDistance(int a, int b) {
