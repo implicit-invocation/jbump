@@ -148,7 +148,7 @@ public class Collisions {
     types.clear();
   }
 
-  private static final ArrayList<Integer> order = new ArrayList<Integer>();
+  private final ArrayList<Integer> order = new ArrayList<Integer>();
   private final Comparator<Integer> orderComparator = new Comparator<Integer>() {
     @Override
     public int compare(Integer a, Integer b) {
@@ -160,9 +160,9 @@ public class Collisions {
     }
   };
 
-  private static final IntIntMap swapMap = new IntIntMap();
+  private final IntIntMap swapMap = new IntIntMap();
 
-  public static <T extends Comparable<T>> void keySort(
+  public <T extends Comparable<T>> void keySort(
     final List<Integer> indices, List<?> list) {
     swapMap.clear();
     for (int i = 0; i < indices.size(); i++) {
@@ -179,7 +179,7 @@ public class Collisions {
     }
   }
 
-  public static <T extends Comparable<T>> void keySort(
+  public <T extends Comparable<T>> void keySort(
     final List<Integer> indices, FloatArray list) {
     swapMap.clear();
     for (int i = 0; i < indices.size(); i++) {
@@ -196,7 +196,7 @@ public class Collisions {
     }
   }
 
-  public static <T extends Comparable<T>> void keySort(
+  public <T extends Comparable<T>> void keySort(
     final List<Integer> indices, BooleanArray list) {
     swapMap.clear();
     for (int i = 0; i < indices.size(); i++) {
