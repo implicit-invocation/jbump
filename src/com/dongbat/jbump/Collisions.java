@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author tao
  */
-public class Collisions {
+public class Collisions implements Comparator<Integer> {
 
   private final BooleanArray overlaps = new BooleanArray();
   private final FloatArray tis = new FloatArray();
@@ -149,17 +149,6 @@ public class Collisions {
   }
 
   private final ArrayList<Integer> order = new ArrayList<Integer>();
-  private final Comparator<Integer> orderComparator = new Comparator<Integer>() {
-    @Override
-    public int compare(Integer a, Integer b) {
-      if (sortByTiAndDistance(a, b)) {
-        return -1;
-      } else {
-        return 1;
-      }
-    }
-  };
-
   private final IntIntMap swapMap = new IntIntMap();
 
   public <T extends Comparable<T>> void keySort(
@@ -218,7 +207,7 @@ public class Collisions {
     for (int i = 0; i < size; i++) {
       order.add(i);
     }
-    Collections.sort(order, orderComparator);
+    Collections.sort(order, this);
     keySort(order, overlaps);
     keySort(order, tis);
     keySort(order, moveXs);
@@ -240,14 +229,15 @@ public class Collisions {
     keySort(order, types);
   }
 
-  private boolean sortByTiAndDistance(int a, int b) {
+  @Override
+  public int compare(Integer a, Integer b) {
     if (tis.get(a) == (tis.get(b))) {
 
       float ad = rect_getSquareDistance(x1s.get(a), y1s.get(a), w1s.get(a), h1s.get(a), x2s.get(a), y2s.get(a), w2s.get(a), h2s.get(a));
       float bd = rect_getSquareDistance(x1s.get(a), y1s.get(a), w1s.get(a), h1s.get(a), x2s.get(b), y2s.get(b), w2s.get(b), h2s.get(b));
 
-      return ad < bd;
+      return Float.compare(ad, bd);
     }
-    return tis.get(a) < tis.get(b);
+    return Float.compare(tis.get(a), tis.get(b));
   }
 }
