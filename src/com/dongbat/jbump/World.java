@@ -30,6 +30,15 @@ public class World<E> {
   private HashMap<Cell, Boolean> nonEmptyCells = new HashMap<Cell, Boolean>();
   private Grid grid = new Grid();
   private RectHelper rectHelper = new RectHelper();
+  private boolean tileMode = true;
+
+  public void setTileMode(boolean tileMode) {
+    this.tileMode = tileMode;
+  }
+
+  public boolean isTileMode() {
+    return tileMode;
+  }
 
   private void addItemToCell(Item<E> item, float cx, float cy) {
     if (!rows.containsKey(cy)) {
@@ -160,7 +169,9 @@ public class World<E> {
         }
       }
     }
-    collisions.sort();
+    if (tileMode) {
+      collisions.sort();
+    }
     return collisions;
   }
 
