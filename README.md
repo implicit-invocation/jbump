@@ -84,7 +84,7 @@ CollisionFilter bulletCollisionFilter = new CollisionFilter() {
 world.move(bulletItem, newX, newY, unitCollisionFilter);
 ```
 
-![Bullet](images/bullet.gif?raw=true "bullet")
+![Bullet](images/shoot.gif?raw=true "bullet")
 
 Update `Item` position and size
 ```Java
