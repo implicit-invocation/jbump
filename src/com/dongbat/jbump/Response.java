@@ -34,7 +34,7 @@ public interface Response {
       this.goalY = goalY;
     }
   }
-  
+
   public Response slide = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
@@ -48,7 +48,7 @@ public interface Response {
           sy = goalY;
         }
       }
-      
+
       x = tch.x;
       y = tch.y;
       goalX = sx;
@@ -72,6 +72,35 @@ public interface Response {
   public Response cross = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
+      result.projectedCollisions.clear();
+      world.project(collision.item, x, y, w, h, goalX, goalY, filter, result.projectedCollisions);
+      result.set(goalX, goalY);
+      return result;
+    }
+  };
+
+  public Response bounce = new Response() {
+    @Override
+    public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
+      Point tch = collision.touch;
+      Point move = collision.move;
+      float bx = tch.x, by = tch.y;
+      if (move.x != 0 || move.y != 0) {
+        float bnx = goalX - tch.x;
+        float bny = goalY - tch.y;
+        if (collision.normal.x == 0) {
+          bny = -bny;
+        } else {
+          bnx = -bnx;
+        }
+        bx = tch.x + bnx;
+        by = tch.y + bny;
+      }
+
+      x = tch.x;
+      y = tch.y;
+      goalX = bx;
+      goalY = by;
       result.projectedCollisions.clear();
       world.project(collision.item, x, y, w, h, goalX, goalY, filter, result.projectedCollisions);
       result.set(goalX, goalY);
