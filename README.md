@@ -8,7 +8,7 @@ jbump is Java port for bump.lua, a 2D AABB collision detection and response libr
 - multiple instances can run on different threads (for server side simulation)
 - safe to repositioning `Item` (must use `world.update`)
 
-![Demo](images/sprite.gif?raw=true "demo")
+![Tile](images/tile.gif?raw=true "tile")
 
 ## Installation
 
@@ -61,8 +61,6 @@ If you want to move an `Item`, call `world.move()`
 ```Java
 world.move(item, newX, newY, CollisionFilter.defaultFilter);
 ```
-
-![Tile](images/tile.gif?raw=true "tile")
 
 World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` get stucked between tiles.
 You can disable `tileMode` if you are not using tiles for walls to save some circles.
