@@ -21,7 +21,7 @@ package com.dongbat.jbump;
  */
 public class Aux {
 
-  public static final float DELTA = 1e-5f;
+  public static float DELTA = 1e-5f;
 
   public static int sign(float x) {
     if (x > 0) {
