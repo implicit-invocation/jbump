@@ -15,7 +15,7 @@
  */
 package com.dongbat.jbump;
 
-import static com.dongbat.jbump.Aux.*;
+import static com.dongbat.jbump.Extra.*;
 
 /**
  *
