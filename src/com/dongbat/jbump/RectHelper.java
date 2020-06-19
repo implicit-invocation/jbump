@@ -15,8 +15,8 @@
  */
 package com.dongbat.jbump;
 
-import static com.dongbat.jbump.Aux.DELTA;
-import static com.dongbat.jbump.Aux.sign;
+import static com.dongbat.jbump.Extra.DELTA;
+import static com.dongbat.jbump.Extra.sign;
 import static com.dongbat.jbump.Rect.rect_containsPoint;
 import static com.dongbat.jbump.Rect.rect_getDiff;
 import static com.dongbat.jbump.Rect.rect_getNearestCorner;
