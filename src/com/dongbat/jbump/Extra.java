@@ -19,7 +19,7 @@ package com.dongbat.jbump;
  *
  * @author tao
  */
-public class Aux {
+public class Extra {
 
   public static float DELTA = 1e-5f;
 
