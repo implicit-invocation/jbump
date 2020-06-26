@@ -2,8 +2,24 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'com.github.implicit-invocation'
+version = '0.0.1-SNAPSHOT'
 
 sourceCompatibility = '1.6'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
