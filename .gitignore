@@ -1,3 +1,6 @@
+## Intellij Idea
+.idea/
+
 nbproject
 .DS_Store
 /.nb-gradle/
