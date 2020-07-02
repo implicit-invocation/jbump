@@ -1,5 +1,7 @@
 ## Intellij Idea
 .idea/
+/test/build/
+/jbump/build/
 
 nbproject
 .DS_Store
