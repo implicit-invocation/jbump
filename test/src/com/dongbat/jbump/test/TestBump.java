@@ -11,6 +11,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.dongbat.jbump.CollisionFilter;
+import com.dongbat.jbump.Item;
+import com.dongbat.jbump.Rect;
+import com.dongbat.jbump.World;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /**
@@ -18,6 +22,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
  * @author Raymond "Raeleus" Buckley
  */
 public class TestBump extends ApplicationAdapter {
+    public static final float LINE_WIDTH = .1f;
     public Texture texture;
     public SpriteBatch spriteBatch;
     public ShapeDrawer shapeDrawer;
@@ -35,6 +40,7 @@ public class TestBump extends ApplicationAdapter {
                     "+-----------------+-------------++-----------------------------------------------------------------+\n" +
                     "+p----------------+-------------++-----------------------------------------------------------------+\n" +
                     "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+    public World<Entity> world;
     
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -59,6 +65,8 @@ public class TestBump extends ApplicationAdapter {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(10, 10, camera);
         shapeDrawer.update();
+        
+        world = new World<Entity>();
         
         entities = new Array<Entity>();
         String[] lines = MAP.split("\n");
@@ -110,6 +118,7 @@ public class TestBump extends ApplicationAdapter {
     
     public static abstract class Entity {
         public float x, y, width, height;
+        public Item<Entity> item;
         public abstract void act(float delta);
         public abstract void draw();
     }
@@ -125,6 +134,8 @@ public class TestBump extends ApplicationAdapter {
             this.y = y;
             width = 1;
             height = 2;
+            item = new Item<Entity>(this);
+            world.add(item, x, y, width, height);
         }
     
         @Override
@@ -143,6 +154,13 @@ public class TestBump extends ApplicationAdapter {
                 y -= MOVE_SPEED * delta;
             }
     
+            world.move(item, x, y, CollisionFilter.defaultFilter);
+            //comment out the following lines to unbind entity position to physics position ------
+            Rect rect = world.getRect(item);
+            x = rect.x;
+            y = rect.y;
+            //------
+            
             camera.position.set(x + width / 2f, y + height / 2f, 0);
         }
     
@@ -154,7 +172,9 @@ public class TestBump extends ApplicationAdapter {
             
             //draw where the physics simulation is
             shapeDrawer.setColor(Color.LIME);
-            shapeDrawer.setDefaultLineWidth(10);
+            shapeDrawer.setDefaultLineWidth(LINE_WIDTH);
+            Rect rect = world.getRect(item);
+            shapeDrawer.rectangle(rect.x + LINE_WIDTH / 2, rect.y + LINE_WIDTH / 2, rect.w - LINE_WIDTH, rect.h - LINE_WIDTH);
         }
     }
     
@@ -164,6 +184,8 @@ public class TestBump extends ApplicationAdapter {
             this.y = y;
             width = 1;
             height = 1;
+            item = new Item<Entity>(this);
+            world.add(item, x, y, width, height);
         }
     
         @Override
@@ -179,7 +201,9 @@ public class TestBump extends ApplicationAdapter {
     
             //draw where the physics simulation is
             shapeDrawer.setColor(Color.WHITE);
-            shapeDrawer.setDefaultLineWidth(10);
+            shapeDrawer.setDefaultLineWidth(LINE_WIDTH);
+            Rect rect = world.getRect(item);
+            shapeDrawer.rectangle(rect.x + LINE_WIDTH / 2, rect.y + LINE_WIDTH / 2, rect.w - LINE_WIDTH, rect.h - LINE_WIDTH);
         }
     }
 }
