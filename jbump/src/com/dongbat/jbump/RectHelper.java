@@ -59,7 +59,7 @@ public class RectHelper {
       float py = rect_detectCollision_nearestCorner.y;
       float wi = min(w1, abs(px));
       float hi = min(h1, abs(py));
-      ti = -wi * h1;
+      ti = -wi * hi;
       overlaps = true;
     } else {
       boolean intersect = rect_getSegmentIntersectionIndices(x, y, w, h, 0, 0, dx, dy, -Float.MAX_VALUE, Float.MAX_VALUE, rect_detectCollision_getSegmentIntersectionIndices_ti, rect_detectCollision_getSegmentIntersectionIndices_n1, rect_detectCollision_getSegmentIntersectionIndices_n2);

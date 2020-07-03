@@ -11,10 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.dongbat.jbump.CollisionFilter;
-import com.dongbat.jbump.Item;
-import com.dongbat.jbump.Rect;
-import com.dongbat.jbump.World;
+import com.dongbat.jbump.*;
+import com.dongbat.jbump.Response.Result;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /**
@@ -154,12 +152,16 @@ public class TestBump extends ApplicationAdapter {
                 y -= MOVE_SPEED * delta;
             }
     
-            world.move(item, x, y, CollisionFilter.defaultFilter);
+            Result result = world.move(item, x, y, CollisionFilter.defaultFilter);
             //comment out the following lines to unbind entity position to physics position ------
             Rect rect = world.getRect(item);
             x = rect.x;
             y = rect.y;
             //------
+            for (int i = 0; i < result.projectedCollisions.size(); i++) {
+                Collision collision = result.projectedCollisions.get(i);
+                System.out.println(collision.normal.x + " " + collision.normal.y);
+            }
             
             camera.position.set(x + width / 2f, y + height / 2f, 0);
         }
