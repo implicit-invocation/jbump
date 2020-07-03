@@ -76,7 +76,7 @@ public class Rect {
           break;
         default:
           nx = 0;
-          ny = -1;
+          ny = 1;
           p = dy;
           q = y + h - y1;
           break;

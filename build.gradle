@@ -1,25 +1,60 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+        google()
+    }
+    dependencies {
 
-group = 'com.github.implicit-invocation'
-version = '0.0.1-SNAPSHOT'
-
-sourceCompatibility = '1.6'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-sourceSets.main.java.srcDirs = [ "src/" ]
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+    }
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+allprojects {
+    group = 'com.github.implicit-invocation'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        google()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url 'https://jitpack.io' }
+    }
 }
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+project(":jbump") {
+    apply plugin: 'java-library'
+    apply plugin: 'maven'
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+}
+
+project(":test") {
+    apply plugin: "java-library"
+
+    dependencies {
+        implementation project(":jbump")
+        api "com.badlogicgames.gdx:gdx:1.9.10"
+        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.9.10"
+        api "com.badlogicgames.gdx:gdx-platform:1.9.10:natives-desktop"
+        implementation "space.earlygrey:shapedrawer:2.3.0"
+    }
 }

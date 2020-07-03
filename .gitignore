@@ -1,6 +1,21 @@
+## Intellij Idea
+.idea/
+/test/build/
+/jbump/build/
+*.ipr
+*.iws
+*.iml
+/out/
+/test/out/
+/jbump/out/
+
+*.class
+
 nbproject
 .DS_Store
 /.nb-gradle/
 /build
-/.gradle
+/.gradle/
+/test/.gradle/
+/jbump/.gradle/
 .nb-gradle-properties
