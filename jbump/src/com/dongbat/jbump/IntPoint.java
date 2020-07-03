@@ -34,4 +34,25 @@ public class IntPoint {
     this.x = x;
     this.y = y;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    IntPoint intPoint = (IntPoint) o;
+
+    return (x == intPoint.x && y == intPoint.y);
+  }
+
+  @Override
+  public int hashCode() {
+    // Rosenberg-Strong pairing function, only works for non-negative coordinates, may adjust later
+    return (x >= y ? x * (x + 2) - y : y * y + x);
+  }
+
+  @Override
+  public String toString() {
+    return "(" +x +", " + y +')';
+  }
 }

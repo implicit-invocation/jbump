@@ -34,4 +34,25 @@ public class Point {
     this.x = x;
     this.y = y;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Point point = (Point) o;
+
+    return Float.compare(point.x, x) == 0 && Float.compare(point.y, y) == 0;
+  }
+
+  @Override
+  public int hashCode() {
+    return (int)(Float.floatToIntBits(x) * 0xC13FA9A902A6328FL
+            + Float.floatToIntBits(y) * 0x91E10DA5C79E7B1DL >>> 32);
+  }
+
+  @Override
+  public String toString() {
+    return "(" +x +", " + y +')';
+  }
 }
