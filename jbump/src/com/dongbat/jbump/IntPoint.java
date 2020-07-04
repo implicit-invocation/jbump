@@ -19,18 +19,18 @@ package com.dongbat.jbump;
  *
  * @author tao
  */
-public class Point {
-  public float x, y;
+public class IntPoint {
+  public int x, y;
 
-  public Point() {
+  public IntPoint() {
   }
 
-  public Point(float x, float y) {
+  public IntPoint(int x, int y) {
     this.x = x;
     this.y = y;
   }
   
-  public void set(float x, float y) {
+  public void set(int x, int y) {
     this.x = x;
     this.y = y;
   }
@@ -40,15 +40,15 @@ public class Point {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    Point point = (Point) o;
+    IntPoint intPoint = (IntPoint) o;
 
-    return Float.compare(point.x, x) == 0 && Float.compare(point.y, y) == 0;
+    return (x == intPoint.x && y == intPoint.y);
   }
 
   @Override
   public int hashCode() {
-    return (int)(Float.floatToIntBits(x) * 0xC13FA9A902A6328FL
-            + Float.floatToIntBits(y) * 0x91E10DA5C79E7B1DL >>> 32);
+    // Rosenberg-Strong pairing function, only works for non-negative coordinates, may adjust later
+    return (x >= y ? x * (x + 2) - y : y * y + x);
   }
 
   @Override

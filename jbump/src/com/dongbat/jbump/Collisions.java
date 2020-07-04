@@ -18,6 +18,7 @@ package com.dongbat.jbump;
 import static com.dongbat.jbump.Rect.rect_getSquareDistance;
 import com.dongbat.jbump.util.BooleanArray;
 import com.dongbat.jbump.util.FloatArray;
+import com.dongbat.jbump.util.IntArray;
 import com.dongbat.jbump.util.IntIntMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +35,8 @@ public class Collisions implements Comparator<Integer> {
   private final FloatArray tis = new FloatArray();
   private final FloatArray moveXs = new FloatArray();
   private final FloatArray moveYs = new FloatArray();
-  private final FloatArray normalXs = new FloatArray();
-  private final FloatArray normalYs = new FloatArray();
+  private final IntArray normalXs = new IntArray();
+  private final IntArray normalYs = new IntArray();
   private final FloatArray touchXs = new FloatArray();
   private final FloatArray touchYs = new FloatArray();
   private final FloatArray x1s = new FloatArray();
@@ -55,7 +56,7 @@ public class Collisions implements Comparator<Integer> {
     add(col.overlaps, col.ti, col.move.x, col.move.y, col.normal.x, col.normal.y, col.touch.x, col.touch.y, col.itemRect.x, col.itemRect.y, col.itemRect.w, col.itemRect.h, col.otherRect.x, col.otherRect.y, col.otherRect.w, col.otherRect.h, col.item, col.other, col.type);
   }
 
-  public void add(boolean overlap, float ti, float moveX, float moveY, float normalX, float normalY, float touchX, float touchY,
+  public void add(boolean overlap, float ti, float moveX, float moveY, int normalX, int normalY, float touchX, float touchY,
     float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2, Item item, Item other, Response type) {
     size++;
     overlaps.add(overlap);
@@ -180,6 +181,23 @@ public class Collisions implements Comparator<Integer> {
       swapMap.put(i, k);
     }
 
+    for (IntIntMap.Entry e : swapMap) {
+      list.swap(e.key, e.value);
+    }
+  }
+  
+  public <T extends Comparable<T>> void keySort(
+          final List<Integer> indices, IntArray list) {
+    swapMap.clear();
+    for (int i = 0; i < indices.size(); i++) {
+      int k = indices.get(i);
+      while (swapMap.containsKey(k)) {
+        k = swapMap.get(k, 0);
+      }
+      
+      swapMap.put(i, k);
+    }
+    
     for (IntIntMap.Entry e : swapMap) {
       list.swap(e.key, e.value);
     }

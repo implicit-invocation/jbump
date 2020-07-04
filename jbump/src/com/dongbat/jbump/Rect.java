@@ -46,12 +46,12 @@ public class Rect {
     result.set(nearest(px, x, x + w), nearest(y, y, y + h));
   }
 
-  public static boolean rect_getSegmentIntersectionIndices(float x, float y, float w, float h, float x1, float y1, float x2, float y2, float ti1, float ti2, Point ti, Point n1, Point n2) {
+  public static boolean rect_getSegmentIntersectionIndices(float x, float y, float w, float h, float x1, float y1, float x2, float y2, float ti1, float ti2, Point ti, IntPoint n1, IntPoint n2) {
     float dx = x2 - x1;
     float dy = y2 - y1;
 
-    float nx = 0, ny = 0;
-    float nx1 = 0, ny1 = 0, nx2 = 0, ny2 = 0;
+    int nx = 0, ny = 0;
+    int nx1 = 0, ny1 = 0, nx2 = 0, ny2 = 0;
     float p, q, r;
 
     for (int side = 1; side <= 4; side++) {

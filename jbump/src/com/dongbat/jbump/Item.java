@@ -21,12 +21,40 @@ package com.dongbat.jbump;
  */
 public class Item<E> {
 
+  /**
+   * This is not ever read by JBump, so this can be anything user code needs it to be.
+   * It isn't considered by {@link #equals(Object)} or by {@link #hashCode()}.
+   */
   public E userData;
+  protected final int identityHash;
 
+  /**
+   * Constructs an Item with no userData (it will be null).
+   * <br>
+   * If you subclass Item, you should call {@code super()} so the cached identity hash code is stored correctly.
+   */
   public Item() {
+    identityHash = System.identityHashCode(this);
   }
 
+  /**
+   * Constructs an Item with the given {@code E} userData; the userData can change after construction.
+   * <br>
+   * If you subclass Item, you should call {@code super(E)} so the cached identity hash code is stored correctly.
+   * @param userData whatever {@code E} item this should hold; may be null.
+   */
   public Item(E userData) {
+    identityHash = System.identityHashCode(this);
     this.userData = userData;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return (this == o);
+  }
+
+  @Override
+  public int hashCode() {
+    return identityHash;
   }
 }

@@ -45,9 +45,9 @@ public class Grid {
     }
   }
 
-  public static interface TraverseCallback {
+  public interface TraverseCallback {
 
-    public void onTraverse(float cx, float cy);
+    void onTraverse(float cx, float cy);
   }
 
   private final Point grid_traverse_c1 = new Point();

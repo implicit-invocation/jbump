@@ -34,7 +34,7 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 	int zeroValue;
 	boolean hasZeroValue;
 
-	private float loadFactor;
+	private final float loadFactor;
 	private int hashShift, mask, threshold;
 	private int stashCapacity;
 	private int pushIterations;
@@ -716,7 +716,7 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 	}
 
 	static public class Entries extends MapIterator implements Iterable<Entry>, Iterator<Entry> {
-		private Entry entry = new Entry();
+		private final Entry entry = new Entry();
 
 		public Entries (IntIntMap map) {
 			super(map);

@@ -21,9 +21,9 @@ package com.dongbat.jbump;
  */
 public interface CollisionFilter {
   
-  public Response filter(Item item, Item other);
+  Response filter(Item item, Item other);
   
-  public static CollisionFilter defaultFilter = new CollisionFilter() {
+  CollisionFilter defaultFilter = new CollisionFilter() {
     @Override
     public Response filter(Item item, Item other) {
       return Response.slide;

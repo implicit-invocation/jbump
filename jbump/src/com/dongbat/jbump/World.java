@@ -15,10 +15,14 @@
  */
 package com.dongbat.jbump;
 
-import static com.dongbat.jbump.Grid.*;
-import static java.lang.Math.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+
+import static com.dongbat.jbump.Grid.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
  *
@@ -26,10 +30,10 @@ import java.util.HashMap;
  */
 public class World<E> {
 
-  private HashMap<Float, HashMap<Float, Cell>> rows = new HashMap<Float, HashMap<Float, Cell>>();
-  private HashMap<Cell, Boolean> nonEmptyCells = new HashMap<Cell, Boolean>();
-  private Grid grid = new Grid();
-  private RectHelper rectHelper = new RectHelper();
+  private final HashMap<Float, HashMap<Float, Cell>> rows = new HashMap<Float, HashMap<Float, Cell>>();
+  private final HashSet<Cell> nonEmptyCells = new HashSet<Cell>();
+  private final Grid grid = new Grid();
+  private final RectHelper rectHelper = new RectHelper();
   private boolean tileMode = true;
 
   public void setTileMode(boolean tileMode) {
@@ -50,9 +54,9 @@ public class World<E> {
     }
     Cell cell = row.get(cx);
 
-    nonEmptyCells.put(cell, true);
-    if (!cell.items.containsKey(item)) {
-      cell.items.put(item, true);
+    nonEmptyCells.add(cell);
+    if (!cell.items.contains(item)) {
+      cell.items.add(item);
       cell.itemCount = cell.itemCount + 1;
     }
   }
@@ -66,7 +70,7 @@ public class World<E> {
       return false;
     }
     Cell cell = row.get(cx);
-    if (!cell.items.containsKey(item)) {
+    if (!cell.items.contains(item)) {
       return false;
     }
     cell.items.remove(item);
@@ -77,7 +81,7 @@ public class World<E> {
     return true;
   }
 
-  private HashMap<Item, Boolean> getDictItemsInCellRect(float cl, float ct, float cw, float ch, HashMap<Item, Boolean> result) {
+  private LinkedHashSet<Item> getDictItemsInCellRect(float cl, float ct, float cw, float ch, LinkedHashSet<Item> result) {
     result.clear();
     for (float cy = ct; cy < ct + ch; cy++) {
       if (rows.containsKey(cy)) {
@@ -86,9 +90,7 @@ public class World<E> {
           if (row.containsKey(cx)) {
             Cell cell = row.get(cx);
             if (cell.itemCount > 0) {
-              for (Item item : cell.items.keySet()) {
-                result.put(item, true);
-              }
+              result.addAll(cell.items);
             }
           }
         }
@@ -97,7 +99,7 @@ public class World<E> {
     return result;
   }
 
-  private float cellSize = 64;
+  private final float cellSize = 64;
 
   private final ArrayList<Cell> getCellsTouchedBySegment_visited = new ArrayList<Cell>();
 
@@ -134,7 +136,7 @@ public class World<E> {
 
   private final ArrayList<Item> project_visited = new ArrayList<Item>();
   private final Rect project_c = new Rect();
-  private final HashMap<Item, Boolean> project_dictItemsInCellRect = new HashMap<Item, Boolean>();
+  private final LinkedHashSet<Item> project_dictItemsInCellRect = new LinkedHashSet<Item>();
 
   public Collisions project(Item item, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Collisions collisions) {
     collisions.clear();
@@ -153,8 +155,8 @@ public class World<E> {
 
     grid.grid_toCellRect(cellSize, tl, tt, tw, th, project_c);
     float cl = project_c.x, ct = project_c.y, cw = project_c.w, ch = project_c.h;
-    HashMap<Item, Boolean> dictItemsInCellRect = getDictItemsInCellRect(cl, ct, cw, ch, project_dictItemsInCellRect);
-    for (Item other : dictItemsInCellRect.keySet()) {
+    LinkedHashSet<Item> dictItemsInCellRect = getDictItemsInCellRect(cl, ct, cw, ch, project_dictItemsInCellRect);
+    for (Item other : dictItemsInCellRect) {
       if (!visited.contains(other)) {
         visited.add(other);
         Response response = filter.filter(item, other);
@@ -175,7 +177,7 @@ public class World<E> {
     return collisions;
   }
 
-  private HashMap<Item, Rect> rects = new HashMap<Item, Rect>();
+  private final HashMap<Item, Rect> rects = new HashMap<Item, Rect>();
 
   public Rect getRect(Item item) {
     return rects.get(item);

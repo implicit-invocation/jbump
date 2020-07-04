@@ -21,9 +21,9 @@ package com.dongbat.jbump;
  */
 public interface Response {
 
-  public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result);
+  Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result);
 
-  public static class Result {
+  class Result {
 
     public float goalX;
     public float goalY;
@@ -35,7 +35,7 @@ public interface Response {
     }
   }
 
-  public Response slide = new Response() {
+  Response slide = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
       Point tch = collision.touch;
@@ -60,7 +60,7 @@ public interface Response {
     }
   };
 
-  public Response touch = new Response() {
+  Response touch = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
       result.projectedCollisions.clear();
@@ -69,7 +69,7 @@ public interface Response {
     }
   };
 
-  public Response cross = new Response() {
+  Response cross = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
       result.projectedCollisions.clear();
@@ -79,7 +79,7 @@ public interface Response {
     }
   };
 
-  public Response bounce = new Response() {
+  Response bounce = new Response() {
     @Override
     public Result response(World world, Collision collision, float x, float y, float w, float h, float goalX, float goalY, CollisionFilter filter, Result result) {
       Point tch = collision.touch;
