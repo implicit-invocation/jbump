@@ -1,18 +1,22 @@
 # jbump
 
 [![](https://jitpack.io/v/implicit-invocation/jbump.svg)](https://jitpack.io/#implicit-invocation/jbump)  
-jbump is Java port for bump.lua, a 2D AABB collision detection and response library.
+jbump is Java port for bump.lua, a 2D AABB collision detection and response library.  
+Please see the [bump.lua README](https://github.com/kikito/bump.lua/blob/master/README.md) for the original
+documentation.
 
 ## Features
-- Can be used for Android, iOS (robovm) and normal Java applications
+- Simple, fast, and accurate collisions in a lightweight package
+- User has complete control over the movement and physics of entities
+- Can be used for Android, iOS (robovm), and desktop Java applications
 - Multiple instances can run on different threads (for server side simulation)
-- Safe to reposition `Item` (must use `world.update`)
+- Entities can be repositioned and resized during the simulation without errors
 
 ![Tile](images/tile.gif?raw=true "tile")
 
 ## Installation
 
-You can download jar file from https://jitpack.io/com/github/implicit-invocation/jbump/17737e7/jbump-17737e7.jar
+You can download the jar file from https://jitpack.io/com/github/implicit-invocation/jbump/17737e7/jbump-17737e7.jar
 
 Using Gradle
 
@@ -48,7 +52,7 @@ Using Maven
 
 You must create a `World` instance and add `Item` instances to it:
 
-```Java
+```java
 World<Entity> world = new World<Entity>();
 Item<Entity> item = world.add(new Item<Entity>(entity), x, y, w, h);
 for(Entity obstacle: obstacles) {
@@ -56,18 +60,28 @@ for(Entity obstacle: obstacles) {
 }
 ```
 
-If you want to move an `Item`, call `world.move()`:
+To move an `Item` through the World, call `world.move()`:
 
-```Java
+```java
 world.move(item, newX, newY, CollisionFilter.defaultFilter);
 ```
 
-World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` getting stuck between tiles.
-You can disable `tileMode` if you are not using tiles for walls to save some circles.
+The above code will simulate movement of the item through the world and generate collisions. The item will be stopped 
+if it collides with another item. To "teleport" an `Item` to a new position without collisions: 
 
-You can write a custom `CollisionFilter`:
+```java
+world.update(item, newX, newY);
+```
 
-```Java
+To also update the size of the `Item`:
+
+```java
+world.update(item, newX, newY, newWidth, newHeight);
+```
+
+To determine what may generate collisions and how they interact with other items, write a custom `CollisionFilter`:
+
+```java
 CollisionFilter bulletCollisionFilter = new CollisionFilter() {
   @Override
   public Response filter(Item item, Item other) {
@@ -79,22 +93,16 @@ CollisionFilter bulletCollisionFilter = new CollisionFilter() {
   }
 };
 ...
-world.move(bulletItem, newX, newY, unitCollisionFilter);
+world.move(bulletItem, newX, newY, bulletCollisionFilter);
 ```
+
+`CollisionFilter` may return `Response.slide`, `Response.cross`, `Response.bounce`, `Response.touch`, and `null`.
 
 ![Bullet](images/shoot.gif?raw=true "bullet")
 
-Update `Item` position and size:
-```Java
-world.update(item, newX, newY, newWidth, newHeight);
-world.update(item, newX, newY); // not resize
-```
-
-Available Response: `slide`, `cross` and `touch`.
-
 Get collided items:
 
-```Java
+```java
 Result result = world.move(item, newX, newY, unitCollisionFilter);
 Collisions projectedCollisions = result.projectedCollisions;
 Array<Item> touched = new Array<Item>();
@@ -106,7 +114,7 @@ for (int i = 0; i < projectedCollisions.size(); i++) {
 
 Store collisions:
 
-```
+```java
 Result result = world.move(item, newX, newY, unitCollisionFilter);
 Collisions projectedCollisions = result.projectedCollisions;
 Collisions collisions = new Collisions();
@@ -115,3 +123,6 @@ for (int i = 0; i < projectedCollisions.size(); i++) {
   collisions.add(col);
 }
 ```
+
+World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` getting stuck between tiles.
+You can disable `tileMode` if you are not using tiles for walls to save some circles.
