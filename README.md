@@ -4,9 +4,9 @@
 jbump is Java port for bump.lua, a 2D AABB collision detection and response library.
 
 ## Features
-- can be used for Android, iOS (robovm) and normal Java application
-- multiple instances can run on different threads (for server side simulation)
-- safe to repositioning `Item` (must use `world.update`)
+- Can be used for Android, iOS (robovm) and normal Java applications
+- Multiple instances can run on different threads (for server side simulation)
+- Safe to reposition `Item` (must use `world.update`)
 
 ![Tile](images/tile.gif?raw=true "tile")
 
@@ -46,7 +46,7 @@ Using Maven
 
 ## Usage
 
-You must create a `World` object and add `Item`s to it.
+You must create a `World` instance and add `Item` instances to it:
 
 ```Java
 World<Entity> world = new World<Entity>();
@@ -56,16 +56,16 @@ for(Entity obstacle: obstacles) {
 }
 ```
 
-If you want to move an `Item`, call `world.move()`
+If you want to move an `Item`, call `world.move()`:
 
 ```Java
 world.move(item, newX, newY, CollisionFilter.defaultFilter);
 ```
 
-World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` get stucked between tiles.
+World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` getting stuck between tiles.
 You can disable `tileMode` if you are not using tiles for walls to save some circles.
 
-You can write custom `CollisionFilter`
+You can write a custom `CollisionFilter`:
 
 ```Java
 CollisionFilter bulletCollisionFilter = new CollisionFilter() {
@@ -84,7 +84,7 @@ world.move(bulletItem, newX, newY, unitCollisionFilter);
 
 ![Bullet](images/shoot.gif?raw=true "bullet")
 
-Update `Item` position and size
+Update `Item` position and size:
 ```Java
 world.update(item, newX, newY, newWidth, newHeight);
 world.update(item, newX, newY); // not resize
@@ -92,7 +92,8 @@ world.update(item, newX, newY); // not resize
 
 Available Response: `slide`, `cross` and `touch`.
 
-Get collided items
+Get collided items:
+
 ```Java
 Result result = world.move(item, newX, newY, unitCollisionFilter);
 Collisions projectedCollisions = result.projectedCollisions;
@@ -103,7 +104,8 @@ for (int i = 0; i < projectedCollisions.size(); i++) {
 }
 ```
 
-Store collisions
+Store collisions:
+
 ```
 Result result = world.move(item, newX, newY, unitCollisionFilter);
 Collisions projectedCollisions = result.projectedCollisions;
@@ -113,7 +115,3 @@ for (int i = 0; i < projectedCollisions.size(); i++) {
   collisions.add(col);
 }
 ```
-
-## TODO
-
-- world querying
