@@ -45,7 +45,13 @@ public class Rect {
   public static void rect_getNearestCorner(float x, float y, float w, float h, float px, float py, Point result) {
     result.set(nearest(px, x, x + w), nearest(y, y, y + h));
   }
-
+  
+  /**
+   * This is a generalized implementation of the liang-barsky algorithm, which also returns
+   * the normals of the sides where the segment intersects.
+   * Notice that normals are only guaranteed to be accurate when initially ti1 == Float.MIN_VALUE, ti2 == Float.MAX_VALUE
+   * @return false if the segment never touches the rect
+   */
   public static boolean rect_getSegmentIntersectionIndices(float x, float y, float w, float h, float x1, float y1, float x2, float y2, float ti1, float ti2, Point ti, IntPoint n1, IntPoint n2) {
     float dx = x2 - x1;
     float dy = y2 - y1;
@@ -56,25 +62,25 @@ public class Rect {
 
     for (int side = 1; side <= 4; side++) {
       switch (side) {
-        case 1:
+        case 1: //left
           nx = -1;
           ny = 0;
           p = -dx;
           q = x1 - x;
           break;
-        case 2:
+        case 2: //right
           nx = 1;
           ny = 0;
           p = dx;
           q = x + w - x1;
           break;
-        case 3:
+        case 3: //top
           nx = 0;
           ny = -1;
           p = -dy;
           q = y1 - y;
           break;
-        default:
+        default: //bottom
           nx = 0;
           ny = 1;
           p = dy;
@@ -112,7 +118,10 @@ public class Rect {
     n2.set(nx2, ny2);
     return true;
   }
-
+  
+  /**
+   * Calculates the minkowsky difference between 2 rects, which is another rect
+   */
   public static void rect_getDiff(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2, Rect result) {
     result.set(x2 - x1 - w1, y2 - y1 - h1, w1 + w2, h1 + h2);
   }

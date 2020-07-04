@@ -89,7 +89,7 @@ public class World<E> {
         for (float cx = cl; cx < cl + cw; cx++) {
           if (row.containsKey(cx)) {
             Cell cell = row.get(cx);
-            if (cell.itemCount > 0) {
+            if (cell.itemCount > 0) { //no cell.itemCount > 1 because tunneling
               result.addAll(cell.items);
             }
           }
@@ -145,6 +145,9 @@ public class World<E> {
     if (item != null) {
       visited.add(item);
     }
+    
+    /*This could probably be done with less cells using a polygon raster over the cells instead of a
+    bounding rect of the whole movement. Conditional to building a queryPolygon method*/
     float tl = min(goalX, x);
     float tt = min(goalY, y);
     float tr = max(goalX + w, x + w);
