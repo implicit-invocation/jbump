@@ -7,12 +7,23 @@ documentation.
 
 ## Features
 - Simple, fast, and accurate collisions in a lightweight package
+- Avoids tunneling with fast AABB calculation 
 - User has complete control over the movement and physics of entities
 - Can be used for Android, iOS (robovm), and desktop Java applications
 - Multiple instances can run on different threads (for server side simulation)
 - Entities can be repositioned and resized during the simulation without errors
 
 ![Tile](images/tile.gif?raw=true "tile")
+
+### Use jbump for...
+* Tile based games
+* Games that entities can be mostly represented by axis-aligned rectangles
+* Top-Down Adventures, Shoot 'Em Ups, Tournament Fighters, and Platfromers
+
+### Do not use jbump for...
+* Games that require polygon collision detection
+* Realistic physics simulations and multiple fast moving objects colliding against each other
+* Simulations where the order in which the collisions are resolved isn't known.
 
 ## Installation
 
@@ -79,6 +90,12 @@ To also update the size of the `Item`:
 world.update(item, newX, newY, newWidth, newHeight);
 ```
 
+You must also remember to remove an entity's associated `Item` when you remove it from the game:
+
+```java
+world.remove(item)
+```
+
 To determine what may generate collisions and how they interact with other items, write a custom `CollisionFilter`:
 
 ```java
@@ -98,20 +115,16 @@ world.move(bulletItem, newX, newY, bulletCollisionFilter);
 
 `CollisionFilter` may return `Response.slide`, `Response.cross`, `Response.bounce`, `Response.touch`, and `null`.
 
-A value of `null` indicates that `other` will not block movement and will not trigger a `Collision`. Use this for
+* A value of `null` indicates that `other` will not block movement and will not trigger a `Collision`. Use this for
 entities that do not interact with each other.
-  
-A value of `Response.touch` will stop all movement of `item` and trigger a `Collision`. Use this for entities like 
+* A value of `Response.touch` will stop all movement of `item` and trigger a `Collision`. Use this for entities like 
 arrows that get stuck in the entities they hit.
-
-A value of `Response.slide` will trigger a `Collision` and stop movement in the direction that `item` hits `other`, but 
+* A value of `Response.slide` will trigger a `Collision` and stop movement in the direction that `item` hits `other`, but 
 will allow it to slide across its surface. This is the typical interaction you would see in a platformer game and is the 
 default `Response`.
-
-A value of `Response.bounce` will trigger a `Collision` and bounce `item` back against the side that it hits `other`.
+* A value of `Response.bounce` will trigger a `Collision` and bounce `item` back against the side that it hits `other`.
 This is typically used in games like Breakout where balls bounce against walls and tiles.
-
-A value of `Response.cross` will trigger a `Collision` but will not stop `item` from intersecting `other` and passing 
+* A value of `Response.cross` will trigger a `Collision` but will not stop `item` from intersecting `other` and passing 
 through it. This is useful for penetrating bullets and area triggers that are turned on when a player passes through
 them.
 
@@ -141,5 +154,19 @@ for (int i = 0; i < projectedCollisions.size(); i++) {
 }
 ```
 
+Each `Collision` reports various data on the contact between the items:
+* item = the item being moved / checked.
+* other = an item colliding with the item being moved.
+* type = the result of `filter(other)`. It's usually "touch", "cross", "slide", or "bounce".
+* overlaps = boolean. True if item "was overlapping" other when the collision started.  
+False if it didn't but "tunneled" through other.
+* ti = float between 0 and 1. How far along the movement to the goal did the collision occur.
+* move = The difference between the original coordinates and the actual ones in x and y values.
+* normal = The collision normal indicating the side the item hit other; integer -1, 0 or 1 in `x` and `y` 
+Useful in detecting if the player hit the ground or is pushing against the side of a wall.
+* touch = The coordinates where item started touching other
+* itemRect = The rectangle item occupied when the touch happened
+* otherRect = The rectangle other occupied when the touch happened
+
 World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` getting stuck between tiles.
-You can disable `tileMode` if you are not using tiles to increase performance.
+You can disable `tileMode` if you are not using tiles to increase performance under certain circumstances.
