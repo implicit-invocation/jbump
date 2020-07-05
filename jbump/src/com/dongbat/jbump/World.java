@@ -15,12 +15,11 @@
  */
 package com.dongbat.jbump;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 import static com.dongbat.jbump.Grid.*;
+import static com.dongbat.jbump.ItemInfo.weightComparator;
+import static com.dongbat.jbump.Rect.rect_getSegmentIntersectionIndices;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -135,6 +134,45 @@ public class World<E> {
     });
 
     return result;
+  }
+  
+  private final ArrayList<Cell> info_cells = new ArrayList<Cell>();
+  private final Point info_ti = new Point();
+  private final IntPoint info_normalX = new IntPoint();
+  private final IntPoint info_normalY = new IntPoint();
+  
+  private ArrayList<ItemInfo> getInfoAboutItemsTouchedBySegment(float x1, float y1, float x2, float y2, CollisionFilter filter) {
+    getCellsTouchedBySegment(x1, y1, x2, y2, info_cells);
+    
+    ArrayList<Item> visited = new ArrayList<Item>();
+    ArrayList<ItemInfo> infos = new ArrayList<ItemInfo>();
+    for (Cell cell : info_cells) {
+      for (Item item : cell.items) {
+        if (!visited.contains(item)) {
+          visited.add(item);
+          if (filter == null || filter.filter(item, null) != null) {
+            Rect rect = rects.get(item);
+            float l = rect.x;
+            float t = rect.y;
+            float w = rect.w;
+            float h = rect.h;
+            
+            if (rect_getSegmentIntersectionIndices(l, t, w, h, x1, y1, x2, y2, 0, 1, info_ti, info_normalX, info_normalY)) {
+              float ti1 = info_ti.x;
+              float ti2 = info_ti.y;
+              if ((0 < ti1 && ti1 < 1) || (0 < ti2 && ti2 < 1)) {
+                rect_getSegmentIntersectionIndices(l, t, w, h, x1, y1, x2, y2, -Float.MAX_VALUE, Float.MAX_VALUE, info_ti, info_normalX, info_normalY);
+                float tii0 = info_ti.x;
+                float tii1 = info_ti.y;
+                infos.add(new ItemInfo(item, ti1, ti2, Math.min(tii0, tii1)));
+              }
+            }
+          }
+        }
+      }
+    }
+    Collections.sort(infos, weightComparator);
+    return infos;
   }
 
   public Collisions project(Item item, float x, float y, float w, float h, float goalX, float goalY, Collisions collisions) {
@@ -360,5 +398,73 @@ public class World<E> {
   
   public float getCellSize() {
     return cellSize;
+  }
+  
+  private final Rect query_c = new Rect();
+  private final LinkedHashSet<Item> query_dictItemsInCellRect = new LinkedHashSet<Item>();
+  
+  public ArrayList<Item> queryRect(float x, float y, float w, float h, CollisionFilter filter) {
+    grid.grid_toCellRect(cellSize, x, y, w, h, query_c);
+    float cl = query_c.x, ct = query_c.y, cw = query_c.w, ch = query_c.h;
+    LinkedHashSet<Item> dictItemsInCellRect = getDictItemsInCellRect(cl, ct, cw, ch, query_dictItemsInCellRect);
+    
+    ArrayList<Item> items = new ArrayList<Item>();
+    Rect rect = new Rect();
+    for (Item item : dictItemsInCellRect) {
+      rect = rects.get(item);
+      if ((filter == null || filter.filter(item, null) != null) && rect.rect_isIntersecting(x, y, w, h, rect.x, rect.y, rect.w,rect.h)) {
+        items.add(item);
+      }
+    }
+    
+    return items;
+  }
+  
+  private final Point query_point = new Point();
+  
+  public ArrayList<Item> queryPoint(float x, float y, CollisionFilter filter) {
+    toCell(x, y, query_point);
+    float cx = query_point.x;
+    float cy = query_point.y;
+    LinkedHashSet<Item> dictItemsInCellRect = getDictItemsInCellRect(cx, cy, 1, 1, query_dictItemsInCellRect);
+    
+    ArrayList<Item> items = new ArrayList<Item>();
+    Rect rect = new Rect();
+    for (Item item : dictItemsInCellRect) {
+      rect = rects.get(item);
+      if ((filter == null || filter.filter(item, null) != null) && rect.rect_containsPoint(rect.x, rect.y, rect.w, rect.h, x, y)) {
+        items.add(item);
+      }
+    }
+    return items;
+  }
+  
+  public ArrayList<Item> querySegment(float x1, float y1, float x2, float y2, CollisionFilter filter) {
+    ArrayList<ItemInfo> infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter);
+    ArrayList<Item> items = new ArrayList<Item>();
+    for (ItemInfo info : infos) {
+      items.add(info.item);
+    }
+    
+    return items;
+  }
+  
+  public ArrayList<ItemInfo> querySegmentWithCoords(float x1, float y1, float x2, float y2, CollisionFilter filter) {
+    ArrayList<ItemInfo> infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter);
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    
+    for (ItemInfo info : infos) {
+      float ti1 = info.ti1;
+      float ti2 = info.ti2;
+      
+      info.weight = 0;
+      info.x1 = x1 + dx * ti1;
+      info.y1 = y1 + dy * ti1;
+      info.x2 = x1 + dx * ti2;
+      info.y2 = y1 + dy * ti2;
+    }
+    
+    return infos;
   }
 }
