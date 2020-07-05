@@ -98,6 +98,23 @@ world.move(bulletItem, newX, newY, bulletCollisionFilter);
 
 `CollisionFilter` may return `Response.slide`, `Response.cross`, `Response.bounce`, `Response.touch`, and `null`.
 
+A value of `null` indicates that `other` will not block movement and will not trigger a `Collision`. Use this for
+entities that do not interact with each other.
+  
+A value of `Response.touch` will stop all movement of `item` and trigger a `Collision`. Use this for entities like 
+arrows that get stuck in the entities they hit.
+
+A value of `Response.slide` will trigger a `Collision` and stop movement in the direction that `item` hits `other`, but 
+will allow it to slide across its surface. This is the typical interaction you would see in a platformer game and is the 
+default `Response`.
+
+A value of `Response.bounce` will trigger a `Collision` and bounce `item` back against the side that it hits `other`.
+This is typically used in games like Breakout where balls bounce against walls and tiles.
+
+A value of `Response.cross` will trigger a `Collision` but will not stop `item` from intersecting `other` and passing 
+through it. This is useful for penetrating bullets and area triggers that are turned on when a player passes through
+them.
+
 ![Bullet](images/shoot.gif?raw=true "bullet")
 
 Get collided items:
@@ -125,4 +142,4 @@ for (int i = 0; i < projectedCollisions.size(); i++) {
 ```
 
 World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` getting stuck between tiles.
-You can disable `tileMode` if you are not using tiles for walls to save some circles.
+You can disable `tileMode` if you are not using tiles to increase performance.
