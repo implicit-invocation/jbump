@@ -403,12 +403,12 @@ public class World<E> {
   private final Rect query_c = new Rect();
   private final LinkedHashSet<Item> query_dictItemsInCellRect = new LinkedHashSet<Item>();
   
-  public ArrayList<Item> queryRect(float x, float y, float w, float h, CollisionFilter filter) {
+  public ArrayList<Item> queryRect(float x, float y, float w, float h, CollisionFilter filter, ArrayList<Item> items) {
+    items.clear();
     grid.grid_toCellRect(cellSize, x, y, w, h, query_c);
     float cl = query_c.x, ct = query_c.y, cw = query_c.w, ch = query_c.h;
     LinkedHashSet<Item> dictItemsInCellRect = getDictItemsInCellRect(cl, ct, cw, ch, query_dictItemsInCellRect);
     
-    ArrayList<Item> items = new ArrayList<Item>();
     Rect rect = new Rect();
     for (Item item : dictItemsInCellRect) {
       rect = rects.get(item);
