@@ -35,7 +35,16 @@ public class World<E> {
   private final Grid grid = new Grid();
   private final RectHelper rectHelper = new RectHelper();
   private boolean tileMode = true;
-
+  private final float cellSize;
+  
+  public World() {
+    this(64f);
+  }
+  
+  public World(float cellSize) {
+    this.cellSize = cellSize;
+  }
+  
   public void setTileMode(boolean tileMode) {
     this.tileMode = tileMode;
   }
@@ -98,8 +107,6 @@ public class World<E> {
     }
     return result;
   }
-
-  private final float cellSize = 64;
 
   private final ArrayList<Cell> getCellsTouchedBySegment_visited = new ArrayList<Cell>();
 
@@ -349,5 +356,9 @@ public class World<E> {
     Response.Result result = check(item, goalX, goalY, filter);
     update(item, result.goalX, result.goalY);
     return result;
+  }
+  
+  public float getCellSize() {
+    return cellSize;
   }
 }

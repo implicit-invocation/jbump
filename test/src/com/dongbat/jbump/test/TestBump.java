@@ -64,7 +64,7 @@ public class TestBump extends ApplicationAdapter {
         viewport = new ExtendViewport(10, 10, camera);
         shapeDrawer.update();
         
-        world = new World<Entity>();
+        world = new World<Entity>(1f);
         
         entities = new Array<Entity>();
         String[] lines = MAP.split("\n");
