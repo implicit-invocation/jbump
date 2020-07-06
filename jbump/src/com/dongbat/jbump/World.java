@@ -144,6 +144,7 @@ public class World<E> {
   
   private ArrayList<ItemInfo> getInfoAboutItemsTouchedBySegment(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<ItemInfo> infos) {
     info_visited.clear();
+    infos.clear();
     getCellsTouchedBySegment(x1, y1, x2, y2, info_cells);
     
     for (Cell cell : info_cells) {
@@ -409,9 +410,8 @@ public class World<E> {
     float cl = query_c.x, ct = query_c.y, cw = query_c.w, ch = query_c.h;
     LinkedHashSet<Item> dictItemsInCellRect = getDictItemsInCellRect(cl, ct, cw, ch, query_dictItemsInCellRect);
     
-    Rect rect = new Rect();
     for (Item item : dictItemsInCellRect) {
-      rect = rects.get(item);
+      Rect rect = rects.get(item);
       if ((filter == null || filter.filter(item, null) != null) && rect.rect_isIntersecting(x, y, w, h, rect.x, rect.y, rect.w,rect.h)) {
         items.add(item);
       }
