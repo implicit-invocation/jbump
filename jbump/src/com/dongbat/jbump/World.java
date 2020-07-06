@@ -330,7 +330,7 @@ public class World<E> {
         for (float cy = ct2; cy <= cb2; cy++) {
           cyOut = cy < ct1 || cy > cb1;
           for (float cx = cl2; cx <= cr2; cx++) {
-            if (cyOut || cx < cl1 || cy > cr1) {
+            if (cyOut || cx < cl1 || cx > cr1) {
               addItemToCell(item, cx, cy);
             }
           }
