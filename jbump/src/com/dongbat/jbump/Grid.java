@@ -18,7 +18,10 @@ package com.dongbat.jbump;
 import static java.lang.Math.*;
 
 /**
- *
+ * grid_traverse* methods are based on "A Fast Voxel Traversal Algorithm for Ray Tracing",
+ * by John Amanides and Andrew Woo - http://www.cse.yorku.ca/~amana/research/grid.pdf
+ * It has been modified to include both cells when the ray "touches a grid corner",
+ * and with a different exit condition
  * @author tao
  */
 public class Grid {
@@ -72,12 +75,16 @@ public class Grid {
 
     f.onTraverse(cx, cy);
 
+    /*The default implementation had an infinite loop problem when
+    approaching the last cell in some occasions. We finish iterating
+    when we are *next* to the last cell*/
     while (abs(cx - cx2) + abs(cy - cy2) > 1) {
       if (tx < ty) {
         tx = tx + dx;
         cx = cx + stepX;
         f.onTraverse(cx, cy);
       } else {
+        //Addition: include both cells when going through corners
         if (tx == ty) {
           f.onTraverse(cx + stepX, cy);
         }
@@ -87,6 +94,7 @@ public class Grid {
       }
     }
 
+    //If we have not arrived to the last cell, use it
     if (cx != cx2 || cy != cy2) {
       f.onTraverse(cx2, cy2);
     }
