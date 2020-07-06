@@ -140,16 +140,16 @@ public class World<E> {
   private final Point info_ti = new Point();
   private final IntPoint info_normalX = new IntPoint();
   private final IntPoint info_normalY = new IntPoint();
+  private final ArrayList<Item> info_visited = new ArrayList<Item>();
   
-  private ArrayList<ItemInfo> getInfoAboutItemsTouchedBySegment(float x1, float y1, float x2, float y2, CollisionFilter filter) {
+  private ArrayList<ItemInfo> getInfoAboutItemsTouchedBySegment(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<ItemInfo> infos) {
+    info_visited.clear();
     getCellsTouchedBySegment(x1, y1, x2, y2, info_cells);
     
-    ArrayList<Item> visited = new ArrayList<Item>();
-    ArrayList<ItemInfo> infos = new ArrayList<ItemInfo>();
     for (Cell cell : info_cells) {
       for (Item item : cell.items) {
-        if (!visited.contains(item)) {
-          visited.add(item);
+        if (!info_visited.contains(item)) {
+          info_visited.add(item);
           if (filter == null || filter.filter(item, null) != null) {
             Rect rect = rects.get(item);
             float l = rect.x;
@@ -422,16 +422,15 @@ public class World<E> {
   
   private final Point query_point = new Point();
   
-  public ArrayList<Item> queryPoint(float x, float y, CollisionFilter filter) {
+  public ArrayList<Item> queryPoint(float x, float y, CollisionFilter filter, ArrayList<Item> items) {
+    items.clear();
     toCell(x, y, query_point);
     float cx = query_point.x;
     float cy = query_point.y;
     LinkedHashSet<Item> dictItemsInCellRect = getDictItemsInCellRect(cx, cy, 1, 1, query_dictItemsInCellRect);
     
-    ArrayList<Item> items = new ArrayList<Item>();
-    Rect rect = new Rect();
     for (Item item : dictItemsInCellRect) {
-      rect = rects.get(item);
+      Rect rect = rects.get(item);
       if ((filter == null || filter.filter(item, null) != null) && rect.rect_containsPoint(rect.x, rect.y, rect.w, rect.h, x, y)) {
         items.add(item);
       }
@@ -439,9 +438,10 @@ public class World<E> {
     return items;
   }
   
-  public ArrayList<Item> querySegment(float x1, float y1, float x2, float y2, CollisionFilter filter) {
-    ArrayList<ItemInfo> infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter);
-    ArrayList<Item> items = new ArrayList<Item>();
+  private final ArrayList<ItemInfo> query_infos = new ArrayList<ItemInfo>();
+  public ArrayList<Item> querySegment(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<Item> items) {
+    items.clear();
+    ArrayList<ItemInfo> infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter, query_infos);
     for (ItemInfo info : infos) {
       items.add(info.item);
     }
@@ -449,8 +449,9 @@ public class World<E> {
     return items;
   }
   
-  public ArrayList<ItemInfo> querySegmentWithCoords(float x1, float y1, float x2, float y2, CollisionFilter filter) {
-    ArrayList<ItemInfo> infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter);
+  public ArrayList<ItemInfo> querySegmentWithCoords(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<ItemInfo> infos) {
+    infos.clear();
+    infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter, infos);
     float dx = x2 - x1;
     float dy = y2 - y1;
     
