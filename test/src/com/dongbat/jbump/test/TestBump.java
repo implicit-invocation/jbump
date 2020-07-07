@@ -2,18 +2,26 @@ package com.dongbat.jbump.test;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.dongbat.jbump.*;
 import com.dongbat.jbump.Response.Result;
 import space.earlygrey.shapedrawer.ShapeDrawer;
+
+import java.util.ArrayList;
+
+import static com.dongbat.jbump.test.TestBump.Mode.*;
 
 /**
  * A runnable game to demonstrate the use and functionality of JBump.
@@ -24,7 +32,8 @@ public class TestBump extends ApplicationAdapter {
     public Texture texture;
     public SpriteBatch spriteBatch;
     public ShapeDrawer shapeDrawer;
-    public ExtendViewport viewport;
+    public ExtendViewport gameViewport;
+    public ScreenViewport uiViewport;
     public OrthographicCamera camera;
     public Array<Entity> entities;
     public static final String MAP =
@@ -39,6 +48,16 @@ public class TestBump extends ApplicationAdapter {
                     "+p----------------+-------------++-----------------------------------------------------------------+\n" +
                     "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
     public World<Entity> world;
+    public BitmapFont font;
+    public Mode mode;
+    public enum Mode {
+        POINT, RECT, SEGMENT, SEGMENT_WITH_COORDS
+    }
+    public int debugMagnitude;
+    public static final int DEBUG_VALUE_INCREASE = 15;
+    public static final float DEBUG_MAX_RECT_SIZE = 4f;
+    public static final float DEBUG_SEGMENT_LENGTH = 4f;
+    public static final Vector2 tempVector = new Vector2();
     
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -57,15 +76,17 @@ public class TestBump extends ApplicationAdapter {
         texture = new Texture(pixmap);
         pixmap.dispose();
         TextureRegion textureRegion = new TextureRegion(texture, 0, 0, 1, 1);
-        
         shapeDrawer = new ShapeDrawer(spriteBatch, textureRegion);
         
         camera = new OrthographicCamera();
-        viewport = new ExtendViewport(10, 10, camera);
+        gameViewport = new ExtendViewport(10, 10, camera);
+        uiViewport = new ScreenViewport();
         shapeDrawer.update();
         
-        world = new World<Entity>(1f);
+        font = new BitmapFont();
+        mode = POINT;
         
+        world = new World<Entity>(1f);
         entities = new Array<Entity>();
         String[] lines = MAP.split("\n");
         for (int j = 0; j < lines.length; j++) {
@@ -91,20 +112,90 @@ public class TestBump extends ApplicationAdapter {
         //draw
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        viewport.apply();
+        gameViewport.apply();
         spriteBatch.setProjectionMatrix(camera.combined);
         shapeDrawer.update();
         spriteBatch.begin();
         for (Entity entity : entities) {
             entity.draw();
         }
+        
+        //conduct debug test, render shapes, and get text
+        String debugText = conductDebugTest();
+        
+        //draw debug text
+        uiViewport.apply();
+        spriteBatch.setProjectionMatrix(uiViewport.getCamera().combined);
+        font.setColor(Color.RED);
+        font.draw(spriteBatch, debugText, 10f, uiViewport.getWorldHeight() - 10f);
         spriteBatch.end();
+    }
+    
+    public final ArrayList<Item> items = new ArrayList<Item>();
+    public final ArrayList<ItemInfo> infos = new ArrayList<ItemInfo>();
+    
+    public String conductDebugTest() {
+        if (Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
+            mode = Mode.values()[mode.ordinal() == Mode.values().length - 1 ? 0 : mode.ordinal() + 1];
+        }
+        
+        if (Gdx.input.isButtonJustPressed(Buttons.RIGHT)) {
+            debugMagnitude += DEBUG_VALUE_INCREASE;
+            debugMagnitude %= 360;
+        }
+        
+        StringBuilder builder = new StringBuilder("Mouse Coords: (");
+        tempVector.set(Gdx.input.getX(), Gdx.input.getY());
+        builder.append((int) tempVector.x).append(", ").append((int) tempVector.y).append(") Game Coords: (");
+        gameViewport.unproject(tempVector);
+        builder.append(tempVector.x).append(", ").append(tempVector.y).append(")\nMode: ").append(mode).append("\n");
+        float x = tempVector.x;
+        float y = tempVector.y;
+        
+        shapeDrawer.setColor(Color.ORANGE);
+        shapeDrawer.setDefaultLineWidth(.05f);
+        switch (mode) {
+            case POINT: //collision check at mouse coordinates
+                world.queryPoint(x, y, CollisionFilter.defaultFilter, items);
+                shapeDrawer.circle(x, y, .1f);
+                break;
+            case RECT: //collision check of rectangle centered at mouse coordinates
+                float dimension = debugMagnitude / 360f * DEBUG_MAX_RECT_SIZE;
+                world.queryRect(x - dimension / 2, y - dimension / 2, dimension, dimension, CollisionFilter.defaultFilter, items);
+                shapeDrawer.rectangle(x - dimension / 2, y - dimension / 2, dimension, dimension);
+                break;
+            case SEGMENT: //collision check of line segment starting at mouse coordinates
+                tempVector.set(DEBUG_SEGMENT_LENGTH, 0);
+                tempVector.rotate(debugMagnitude);
+                tempVector.add(x, y);
+                world.querySegment(x, y, tempVector.x, tempVector.y, CollisionFilter.defaultFilter, items);
+                shapeDrawer.line(x, y, tempVector.x, tempVector.y);
+                break;
+            case SEGMENT_WITH_COORDS: //collision check of line segment with drawing ending at closest collision point
+                tempVector.set(DEBUG_SEGMENT_LENGTH, 0);
+                tempVector.rotate(debugMagnitude);
+                tempVector.add(x, y);
+                world.querySegmentWithCoords(x, y, tempVector.x, tempVector.y, CollisionFilter.defaultFilter, infos);
+                if (infos.size() == 0) {
+                    shapeDrawer.line(x, y, tempVector.x, tempVector.y);
+                } else {
+                    shapeDrawer.line(x, y, infos.get(0).x1, infos.get(0).y1);
+                }
+                break;
+        }
+        
+        builder.append("items: ").append(items.size());
+        for (Item item : items) {
+            builder.append(", ").append(item.userData.getClass().getSimpleName());
+        }
+        
+        return builder.toString();
     }
     
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height);
+        gameViewport.update(width, height);
+        uiViewport.update(width, height, true);
         shapeDrawer.update();
     }
     
