@@ -404,6 +404,12 @@ public class World<E> {
   private final Rect query_c = new Rect();
   private final LinkedHashSet<Item> query_dictItemsInCellRect = new LinkedHashSet<Item>();
   
+  /**
+   * A collision check of items that intersect the given rectangle.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null.
+   * @param items An empty list that will be filled with the {@link Item} instances that collide with the rectangle.
+   */
   public ArrayList<Item> queryRect(float x, float y, float w, float h, CollisionFilter filter, ArrayList<Item> items) {
     items.clear();
     grid.grid_toCellRect(cellSize, x, y, w, h, query_c);
@@ -422,6 +428,12 @@ public class World<E> {
   
   private final Point query_point = new Point();
   
+  /**
+   * A collision check of items that intersect the given point.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null.
+   * @param items An empty list that will be filled with the {@link Item} instances that collide with the point.
+   */
   public ArrayList<Item> queryPoint(float x, float y, CollisionFilter filter, ArrayList<Item> items) {
     items.clear();
     toCell(x, y, query_point);
@@ -438,6 +450,12 @@ public class World<E> {
     return items;
   }
   
+  /**
+   * A collision check of items that intersect the given line segment.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null.
+   * @param items An empty list that will be filled with the {@link Item} instances that intersect the segment.
+   */
   private final ArrayList<ItemInfo> query_infos = new ArrayList<ItemInfo>();
   public ArrayList<Item> querySegment(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<Item> items) {
     items.clear();
@@ -449,6 +467,13 @@ public class World<E> {
     return items;
   }
   
+  /**
+   * A collision check of items that intersect the given line segment. Returns more details about where the collision
+   * occurs compared to {@link World#querySegment(float, float, float, float, CollisionFilter, ArrayList)}
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null
+   * @param infos An empty list that will be filled with the collision information.
+   */
   public ArrayList<ItemInfo> querySegmentWithCoords(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<ItemInfo> infos) {
     infos.clear();
     infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter, infos);

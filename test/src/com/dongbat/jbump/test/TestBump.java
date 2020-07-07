@@ -155,23 +155,23 @@ public class TestBump extends ApplicationAdapter {
         shapeDrawer.setColor(Color.ORANGE);
         shapeDrawer.setDefaultLineWidth(.05f);
         switch (mode) {
-            case POINT:
+            case POINT: //collision check at mouse coordinates
                 world.queryPoint(x, y, CollisionFilter.defaultFilter, items);
                 shapeDrawer.circle(x, y, .1f);
                 break;
-            case RECT:
+            case RECT: //collision check of rectangle centered at mouse coordinates
                 float dimension = debugMagnitude / 360f * DEBUG_MAX_RECT_SIZE;
                 world.queryRect(x - dimension / 2, y - dimension / 2, dimension, dimension, CollisionFilter.defaultFilter, items);
                 shapeDrawer.rectangle(x - dimension / 2, y - dimension / 2, dimension, dimension);
                 break;
-            case SEGMENT:
+            case SEGMENT: //collision check of line segment starting at mouse coordinates
                 tempVector.set(DEBUG_SEGMENT_LENGTH, 0);
                 tempVector.rotate(debugMagnitude);
                 tempVector.add(x, y);
                 world.querySegment(x, y, tempVector.x, tempVector.y, CollisionFilter.defaultFilter, items);
                 shapeDrawer.line(x, y, tempVector.x, tempVector.y);
                 break;
-            case SEGMENT_WITH_COORDS:
+            case SEGMENT_WITH_COORDS: //collision check of line segment with drawing ending at closest collision point
                 tempVector.set(DEBUG_SEGMENT_LENGTH, 0);
                 tempVector.rotate(debugMagnitude);
                 tempVector.add(x, y);
