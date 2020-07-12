@@ -1,7 +1,7 @@
 # jbump
 
-[![](https://jitpack.io/v/implicit-invocation/jbump.svg)](https://jitpack.io/#implicit-invocation/jbump)  
-jbump is Java port for bump.lua, a 2D AABB collision detection and response library.  
+[![](https://jitpack.io/v/tommyettinger/jbump.svg)](https://jitpack.io/#tommyettinger/jbump)  
+jbump is a Java port for bump.lua, a 2D AABB collision detection and response library.  
 Please see the [bump.lua README](https://github.com/kikito/bump.lua/blob/master/README.md) for the original
 documentation.
 
@@ -18,7 +18,7 @@ documentation.
 ### Use jbump for...
 * Tile based games
 * Games that entities can be mostly represented by axis-aligned rectangles
-* Top-Down Adventures, Shoot 'Em Ups, Tournament Fighters, and Platfromers
+* Top-Down Adventures, Shoot 'Em Ups, Tournament Fighters, and Platformers
 
 ### Do not use jbump for...
 * Games that require polygon collision detection
@@ -27,37 +27,45 @@ documentation.
 
 ## Installation
 
-You can download the jar file from https://jitpack.io/com/github/implicit-invocation/jbump/17737e7/jbump-17737e7.jar
+You can directly [download the jar file from JitPack](https://jitpack.io/com/github/tommyettinger/jbump/4e78b3b334/jbump-4e78b3b334.jar),
+or you can use a project management tool like Maven or Gradle.
 
 Using Gradle
 
- ```gradle
- repositories { 
-      jcenter()
-      maven { url "https://jitpack.io" }
- }
- dependencies {
-       compile 'com.github.implicit-invocation:jbump:master-SNAPSHOT'
- }
- ```  
+```gradle
+// NOTE: this is not the "repositories" section inside "buildscript", so make sure to check where you're putting the repository!
+allprojects {
+		repositories {
+	  	// ...
+		  maven { url 'https://jitpack.io' }
+	 }
+}
+dependencies {
+  // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
+  implementation 'com.github.tommyettinger:jbump:4e78b3b334' // check JitPack for other versions if you want a newer one
+}
+```  
 
 Using Maven
 
-```maven
-  <repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-  </repositories>
+```xml
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
  ...
-  <dependency>
-      <groupId>com.github.implicit-invocation</groupId>
-      <artifactId>jbump</artifactId>
-      <version>master-SNAPSHOT</version>
-  </dependency>
-
+	<dependency>
+	    <groupId>com.github.tommyettinger</groupId>
+	    <artifactId>jbump</artifactId>
+	    <version>4e78b3b334</version> <!-- check JitPack for other versions if you want a newer one -->
+	</dependency>
 ```
+
+The latest commit version can be looked up [here, on JitPack's page for jbump](https://jitpack.io/#tommyettinger/jbump),
+under the Commits tab. You can copy any of those 10-hex-digit identifiers for a commit and replace `4e78b3b334` with your
+commit of choice to change version.
 
 ## Usage
 
