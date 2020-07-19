@@ -15,12 +15,11 @@
  */
 package com.dongbat.jbump;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 import static com.dongbat.jbump.Grid.*;
+import static com.dongbat.jbump.ItemInfo.weightComparator;
+import static com.dongbat.jbump.Rect.rect_getSegmentIntersectionIndices;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -35,7 +34,16 @@ public class World<E> {
   private final Grid grid = new Grid();
   private final RectHelper rectHelper = new RectHelper();
   private boolean tileMode = true;
-
+  private final float cellSize;
+  
+  public World() {
+    this(64f);
+  }
+  
+  public World(float cellSize) {
+    this.cellSize = cellSize;
+  }
+  
   public void setTileMode(boolean tileMode) {
     this.tileMode = tileMode;
   }
@@ -89,7 +97,7 @@ public class World<E> {
         for (float cx = cl; cx < cl + cw; cx++) {
           if (row.containsKey(cx)) {
             Cell cell = row.get(cx);
-            if (cell.itemCount > 0) {
+            if (cell.itemCount > 0) { //no cell.itemCount > 1 because tunneling
               result.addAll(cell.items);
             }
           }
@@ -98,8 +106,6 @@ public class World<E> {
     }
     return result;
   }
-
-  private final float cellSize = 64;
 
   private final ArrayList<Cell> getCellsTouchedBySegment_visited = new ArrayList<Cell>();
 
@@ -129,6 +135,46 @@ public class World<E> {
 
     return result;
   }
+  
+  private final ArrayList<Cell> info_cells = new ArrayList<Cell>();
+  private final Point info_ti = new Point();
+  private final IntPoint info_normalX = new IntPoint();
+  private final IntPoint info_normalY = new IntPoint();
+  private final ArrayList<Item> info_visited = new ArrayList<Item>();
+  
+  private ArrayList<ItemInfo> getInfoAboutItemsTouchedBySegment(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<ItemInfo> infos) {
+    info_visited.clear();
+    infos.clear();
+    getCellsTouchedBySegment(x1, y1, x2, y2, info_cells);
+    
+    for (Cell cell : info_cells) {
+      for (Item item : cell.items) {
+        if (!info_visited.contains(item)) {
+          info_visited.add(item);
+          if (filter == null || filter.filter(item, null) != null) {
+            Rect rect = rects.get(item);
+            float l = rect.x;
+            float t = rect.y;
+            float w = rect.w;
+            float h = rect.h;
+            
+            if (rect_getSegmentIntersectionIndices(l, t, w, h, x1, y1, x2, y2, 0, 1, info_ti, info_normalX, info_normalY)) {
+              float ti1 = info_ti.x;
+              float ti2 = info_ti.y;
+              if ((0 < ti1 && ti1 < 1) || (0 < ti2 && ti2 < 1)) {
+                rect_getSegmentIntersectionIndices(l, t, w, h, x1, y1, x2, y2, -Float.MAX_VALUE, Float.MAX_VALUE, info_ti, info_normalX, info_normalY);
+                float tii0 = info_ti.x;
+                float tii1 = info_ti.y;
+                infos.add(new ItemInfo(item, ti1, ti2, Math.min(tii0, tii1)));
+              }
+            }
+          }
+        }
+      }
+    }
+    Collections.sort(infos, weightComparator);
+    return infos;
+  }
 
   public Collisions project(Item item, float x, float y, float w, float h, float goalX, float goalY, Collisions collisions) {
     return project(item, x, y, w, h, goalX, goalY, CollisionFilter.defaultFilter, collisions);
@@ -145,6 +191,9 @@ public class World<E> {
     if (item != null) {
       visited.add(item);
     }
+    
+    /*This could probably be done with less cells using a polygon raster over the cells instead of a
+    bounding rect of the whole movement. Conditional to building a queryPolygon method*/
     float tl = min(goalX, x);
     float tt = min(goalY, y);
     float tr = max(goalX + w, x + w);
@@ -282,7 +331,7 @@ public class World<E> {
         for (float cy = ct2; cy <= cb2; cy++) {
           cyOut = cy < ct1 || cy > cb1;
           for (float cx = cl2; cx <= cr2; cx++) {
-            if (cyOut || cx < cl1 || cy > cr1) {
+            if (cyOut || cx < cl1 || cx > cr1) {
               addItemToCell(item, cx, cy);
             }
           }
@@ -346,5 +395,102 @@ public class World<E> {
     Response.Result result = check(item, goalX, goalY, filter);
     update(item, result.goalX, result.goalY);
     return result;
+  }
+  
+  public float getCellSize() {
+    return cellSize;
+  }
+  
+  private final Rect query_c = new Rect();
+  private final LinkedHashSet<Item> query_dictItemsInCellRect = new LinkedHashSet<Item>();
+  
+  /**
+   * A collision check of items that intersect the given rectangle.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null.
+   * @param items An empty list that will be filled with the {@link Item} instances that collide with the rectangle.
+   */
+  public ArrayList<Item> queryRect(float x, float y, float w, float h, CollisionFilter filter, ArrayList<Item> items) {
+    items.clear();
+    grid.grid_toCellRect(cellSize, x, y, w, h, query_c);
+    float cl = query_c.x, ct = query_c.y, cw = query_c.w, ch = query_c.h;
+    LinkedHashSet<Item> dictItemsInCellRect = getDictItemsInCellRect(cl, ct, cw, ch, query_dictItemsInCellRect);
+    
+    for (Item item : dictItemsInCellRect) {
+      Rect rect = rects.get(item);
+      if ((filter == null || filter.filter(item, null) != null) && rect.rect_isIntersecting(x, y, w, h, rect.x, rect.y, rect.w,rect.h)) {
+        items.add(item);
+      }
+    }
+    
+    return items;
+  }
+  
+  private final Point query_point = new Point();
+  
+  /**
+   * A collision check of items that intersect the given point.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null.
+   * @param items An empty list that will be filled with the {@link Item} instances that collide with the point.
+   */
+  public ArrayList<Item> queryPoint(float x, float y, CollisionFilter filter, ArrayList<Item> items) {
+    items.clear();
+    toCell(x, y, query_point);
+    float cx = query_point.x;
+    float cy = query_point.y;
+    LinkedHashSet<Item> dictItemsInCellRect = getDictItemsInCellRect(cx, cy, 1, 1, query_dictItemsInCellRect);
+    
+    for (Item item : dictItemsInCellRect) {
+      Rect rect = rects.get(item);
+      if ((filter == null || filter.filter(item, null) != null) && rect.rect_containsPoint(rect.x, rect.y, rect.w, rect.h, x, y)) {
+        items.add(item);
+      }
+    }
+    return items;
+  }
+  
+  /**
+   * A collision check of items that intersect the given line segment.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null.
+   * @param items An empty list that will be filled with the {@link Item} instances that intersect the segment.
+   */
+  private final ArrayList<ItemInfo> query_infos = new ArrayList<ItemInfo>();
+  public ArrayList<Item> querySegment(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<Item> items) {
+    items.clear();
+    ArrayList<ItemInfo> infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter, query_infos);
+    for (ItemInfo info : infos) {
+      items.add(info.item);
+    }
+    
+    return items;
+  }
+  
+  /**
+   * A collision check of items that intersect the given line segment. Returns more details about where the collision
+   * occurs compared to {@link World#querySegment(float, float, float, float, CollisionFilter, ArrayList)}
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null
+   * @param infos An empty list that will be filled with the collision information.
+   */
+  public ArrayList<ItemInfo> querySegmentWithCoords(float x1, float y1, float x2, float y2, CollisionFilter filter, ArrayList<ItemInfo> infos) {
+    infos.clear();
+    infos = getInfoAboutItemsTouchedBySegment(x1, y1, x2, y2, filter, infos);
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    
+    for (ItemInfo info : infos) {
+      float ti1 = info.ti1;
+      float ti2 = info.ti2;
+      
+      info.weight = 0;
+      info.x1 = x1 + dx * ti1;
+      info.y1 = y1 + dy * ti1;
+      info.x2 = x1 + dx * ti2;
+      info.y2 = y1 + dy * ti2;
+    }
+    
+    return infos;
   }
 }
