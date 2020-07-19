@@ -239,3 +239,14 @@ segment intersects the `Item`. This is helpful for drawing particle effects wher
 The (x2, y2) coordinates define where the segment exits the item, which is great for drawing an exit wound. (ti1, ti2) 
 are values between 0 and 1 that define how far from the starting point the impact happened. This can be used to 
 describe an effect that weakens with distance.
+
+## jbump Overview Tutorial
+
+Watch the following video that summarizes the use of jbump in the context of a platformer game:
+https://youtu.be/IeU06Vzz2hA
+
+Also, review these two example games to learn how jbump can be implemented in platformers and shooters:
+https://github.com/raeleus/jbumpexample
+
+The test class demonstrates the use the query methods, among other important examples:
+https://github.com/tommyettinger/jbump/blob/master/test/src/com/dongbat/jbump/test/TestBump.java
