@@ -16,7 +16,7 @@
 package com.dongbat.jbump;
 
 /**
- *
+ * A 2D point with integer x and y.
  * @author tao
  */
 public class IntPoint {
@@ -53,6 +53,6 @@ public class IntPoint {
 
   @Override
   public String toString() {
-    return "(" +x +", " + y +')';
+    return "(" +x + ", " + y +')';
   }
 }
