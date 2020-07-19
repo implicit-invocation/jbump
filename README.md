@@ -9,7 +9,7 @@ documentation.
 - Simple, fast, and accurate collisions in a lightweight package
 - Avoids tunneling with fast AABB calculation 
 - User has complete control over the movement and physics of entities
-- Can be used for Android, iOS (robovm), and desktop Java applications
+- Can be used for Android, iOS (robovm), HTML5 (GWT), and desktop Java applications
 - Multiple instances can run on different threads (for server side simulation)
 - Entities can be repositioned and resized during the simulation without errors
 
@@ -61,6 +61,29 @@ Using Maven
 	    <artifactId>jbump</artifactId>
 	    <version>4e78b3b334</version> <!-- check JitPack for other versions if you want a newer one -->
 	</dependency>
+```
+
+HTML5(GWT) is supported by adding the sources dependency to the project:
+
+```gradle
+project(":html") {
+  ...
+
+  dependencies {
+    ...
+    // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
+    implementation 'com.github.tommyettinger:jbump:4e78b3b334:sources'
+  }
+}
+``` 
+
+You must also add the inherits line to the GdxDefinition.gwt.xml file of your HTML project:
+
+```xml
+<module rename-to="html">
+  ...
+  <inherits name="com.dongbat.jbump" />
+</module>
 ```
 
 The latest commit version can be looked up [here, on JitPack's page for jbump](https://jitpack.io/#tommyettinger/jbump),
