@@ -204,7 +204,8 @@ Useful in detecting if the player hit the ground or is pushing against the side 
 World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` getting stuck between tiles.
 You can disable `tileMode` if you are not using tiles to increase performance under certain circumstances.
 
-Otherwise, you can fine tune the `cellSize` of each cell used internally to group collisions by implementing the World constructor:
+Otherwise, you can fine tune the `cellSize` of each cell used internally. The world is broken up into a grid of cells
+to reduce the number of collision checks necessary every frame. Use the following World constructor:
 
 ```java
 World<Entity> world = new World<Entity>(32f);
@@ -214,7 +215,8 @@ World<Entity> world = new World<Entity>(32f);
 This value defaults to 64f, which is fine for most use. However, it should be set to a multiple of your tile size in 
 world units for tile-based games. For example, if you're using pixel units and your tiles are 32x32 pixels, cellSize 
 could be 32f, 64f, 128f, etc. If you're using meters and your tiles are 1x1 meters, cellSize could be 1f, 2f, 4f. Set 
-this value lower/higher to tweak performance.
+this value lower/higher to tweak performance. Note that you do not have to have a Tile based game to use jbump, but the
+cell rules still apply to the world.
 
 ## Querying the World
 
