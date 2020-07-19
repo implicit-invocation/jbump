@@ -242,11 +242,11 @@ describe an effect that weakens with distance.
 
 ## jbump Overview Tutorial
 
-Watch the following video that summarizes the use of jbump in the context of a platformer game:
-https://youtu.be/IeU06Vzz2hA
+Watch the following video oon YouTube that summarizes the use of jbump in the context of a platformer game:
+[Jbump AABB Collision Detection and Physics](https://youtu.be/IeU06Vzz2hA)
 
 Also, review these two example games to learn how jbump can be implemented in platformers and shooters:
-https://github.com/raeleus/jbumpexample
+[jbumpexample by raeleus](https://github.com/raeleus/jbumpexample)
 
 The test class demonstrates the use the query methods, among other important examples:
-https://github.com/tommyettinger/jbump/blob/master/test/src/com/dongbat/jbump/test/TestBump.java
+[TestBump.java](https://github.com/tommyettinger/jbump/blob/master/test/src/com/dongbat/jbump/test/TestBump.java)
