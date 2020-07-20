@@ -9,7 +9,7 @@ documentation.
 - Simple, fast, and accurate collisions in a lightweight package
 - Avoids tunneling with fast AABB calculation 
 - User has complete control over the movement and physics of entities
-- Can be used for Android, iOS (robovm), and desktop Java applications
+- Can be used for Android, iOS (robovm), HTML5 (GWT), and desktop Java applications
 - Multiple instances can run on different threads (for server side simulation)
 - Entities can be repositioned and resized during the simulation without errors
 
@@ -61,6 +61,29 @@ Using Maven
 	    <artifactId>jbump</artifactId>
 	    <version>4e78b3b334</version> <!-- check JitPack for other versions if you want a newer one -->
 	</dependency>
+```
+
+HTML5(GWT) is supported by adding the sources dependency to the project:
+
+```gradle
+project(":html") {
+  ...
+
+  dependencies {
+    ...
+    // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
+    implementation 'com.github.tommyettinger:jbump:4e78b3b334:sources'
+  }
+}
+``` 
+
+You must also add the inherits line to the GdxDefinition.gwt.xml file of your HTML project:
+
+```xml
+<module rename-to="html">
+  ...
+  <inherits name="com.dongbat.jbump" />
+</module>
 ```
 
 The latest commit version can be looked up [here, on JitPack's page for jbump](https://jitpack.io/#tommyettinger/jbump),
@@ -181,7 +204,8 @@ Useful in detecting if the player hit the ground or is pushing against the side 
 World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` getting stuck between tiles.
 You can disable `tileMode` if you are not using tiles to increase performance under certain circumstances.
 
-Otherwise, you can fine tune the `cellSize` of each cell used internally to group collisions by implementing the World constructor:
+Otherwise, you can fine tune the `cellSize` of each cell used internally. The world is broken up into a grid of cells
+to reduce the number of collision checks necessary every frame. Use the following World constructor:
 
 ```java
 World<Entity> world = new World<Entity>(32f);
@@ -191,7 +215,8 @@ World<Entity> world = new World<Entity>(32f);
 This value defaults to 64f, which is fine for most use. However, it should be set to a multiple of your tile size in 
 world units for tile-based games. For example, if you're using pixel units and your tiles are 32x32 pixels, cellSize 
 could be 32f, 64f, 128f, etc. If you're using meters and your tiles are 1x1 meters, cellSize could be 1f, 2f, 4f. Set 
-this value lower/higher to tweak performance.
+this value lower/higher to tweak performance. Note that you do not have to have a Tile based game to use jbump, but the
+cell rules still apply to the world.
 
 ## Querying the World
 
@@ -214,3 +239,14 @@ segment intersects the `Item`. This is helpful for drawing particle effects wher
 The (x2, y2) coordinates define where the segment exits the item, which is great for drawing an exit wound. (ti1, ti2) 
 are values between 0 and 1 that define how far from the starting point the impact happened. This can be used to 
 describe an effect that weakens with distance.
+
+## jbump Overview Tutorial
+
+Watch the following video oon YouTube that summarizes the use of jbump in the context of a platformer game:
+[Jbump AABB Collision Detection and Physics](https://youtu.be/IeU06Vzz2hA)
+
+Also, review these two example games to learn how jbump can be implemented in platformers and shooters:
+[jbumpexample by raeleus](https://github.com/raeleus/jbumpexample)
+
+The test class demonstrates the use the query methods, among other important examples:
+[TestBump.java](https://github.com/tommyettinger/jbump/blob/master/test/src/com/dongbat/jbump/test/TestBump.java)

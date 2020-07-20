@@ -29,7 +29,8 @@ import static java.lang.Math.min;
  */
 public class World<E> {
 
-  private final HashMap<Float, HashMap<Float, Cell>> rows = new HashMap<Float, HashMap<Float, Cell>>();
+//  private final HashMap<Float, HashMap<Float, Cell>> rows = new HashMap<Float, HashMap<Float, Cell>>();
+  private final HashMap<Point, Cell> cellMap = new HashMap<Point, Cell>();
   private final HashSet<Cell> nonEmptyCells = new HashSet<Cell>();
   private final Grid grid = new Grid();
   private final RectHelper rectHelper = new RectHelper();
@@ -53,15 +54,12 @@ public class World<E> {
   }
 
   private void addItemToCell(Item<E> item, float cx, float cy) {
-    if (!rows.containsKey(cy)) {
-      rows.put(cy, new HashMap<Float, Cell>());
+    Point pt = new Point(cx, cy);
+    Cell cell = cellMap.get(pt);
+    if(cell == null) {
+      cell = new Cell();
+      cellMap.put(pt, cell);
     }
-    HashMap<Float, Cell> row = rows.get(cy);
-    if (!row.containsKey(cx)) {
-      row.put(cx, new Cell());
-    }
-    Cell cell = row.get(cx);
-
     nonEmptyCells.add(cell);
     if (!cell.items.contains(item)) {
       cell.items.add(item);
@@ -70,14 +68,11 @@ public class World<E> {
   }
 
   private boolean removeItemFromCell(Item item, float cx, float cy) {
-    if (!rows.containsKey(cy)) {
+    Point pt = new Point(cx, cy);
+    Cell cell = cellMap.get(pt);
+    if(cell == null) {
       return false;
     }
-    HashMap<Float, Cell> row = rows.get(cy);
-    if (!row.containsKey(cx)) {
-      return false;
-    }
-    Cell cell = row.get(cx);
     if (!cell.items.contains(item)) {
       return false;
     }
@@ -91,18 +86,15 @@ public class World<E> {
 
   private LinkedHashSet<Item> getDictItemsInCellRect(float cl, float ct, float cw, float ch, LinkedHashSet<Item> result) {
     result.clear();
-    for (float cy = ct; cy < ct + ch; cy++) {
-      if (rows.containsKey(cy)) {
-        HashMap<Float, Cell> row = rows.get(cy);
-        for (float cx = cl; cx < cl + cw; cx++) {
-          if (row.containsKey(cx)) {
-            Cell cell = row.get(cx);
-            if (cell.itemCount > 0) { //no cell.itemCount > 1 because tunneling
-              result.addAll(cell.items);
-            }
-          }
+    Point pt = new Point(cl, ct);
+    for (float cy = ct; cy < ct + ch; cy++, pt.y++) {
+      for (float cx = cl; cx < cl + cw; cx++, pt.x++) {
+        Cell cell = cellMap.get(pt);
+        if (cell != null && cell.itemCount > 0) { //no cell.itemCount > 1 because tunneling
+          result.addAll(cell.items);
         }
       }
+      pt.x = cl;
     }
     return result;
   }
@@ -114,18 +106,14 @@ public class World<E> {
     getCellsTouchedBySegment_visited.clear();
     // use set
     final ArrayList<Cell> visited = getCellsTouchedBySegment_visited;
+    final Point pt = new Point(x1, y1);
     grid.grid_traverse(cellSize, x1, y1, x2, y2, new TraverseCallback() {
       @Override
       public void onTraverse(float cx, float cy) {
-        if (!rows.containsKey(cy)) {
-          return;
-        }
-        HashMap<Float, Cell> row = rows.get(cy);
-        if (!row.containsKey(cx)) {
-          return;
-        }
-        Cell cell = row.get(cx);
-        if (visited.contains(cell)) {
+        pt.x = cx;
+        pt.y = cy;
+        Cell cell = cellMap.get(pt);
+        if (cell == null || visited.contains(cell)) {
           return;
         }
         visited.add(cell);
@@ -232,14 +220,8 @@ public class World<E> {
     return rects.get(item);
   }
 
-  public int countCells() {
-    int count = 0;
-    for (HashMap<Float, Cell> row : rows.values()) {
-      for (Float x : row.keySet()) {
-        count++;
-      }
-    }
-    return count;
+  public int countCells() { 
+    return cellMap.size();
   }
 
   public boolean hasItem(Item item) {
