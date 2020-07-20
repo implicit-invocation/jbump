@@ -211,7 +211,8 @@ to reduce the number of collision checks necessary every frame. Use the followin
 World<Entity> world = new World<Entity>(32f);
 ```
 
-`cellSize` represents the size of the sides of the squared cells that will be used internally to provide the data. 
+`cellSize` represents the size of the sides of the squared cells that will be used internally to provide the data 
+(it is a static-grid used for space-indexing of the different objects, and helps with performance improvements).
 This value defaults to 64f, which is fine for most use. However, it should be set to a multiple of your tile size in 
 world units for tile-based games. For example, if you're using pixel units and your tiles are 32x32 pixels, cellSize 
 could be 32f, 64f, 128f, etc. If you're using meters and your tiles are 1x1 meters, cellSize could be 1f, 2f, 4f. Set 
@@ -242,7 +243,7 @@ describe an effect that weakens with distance.
 
 ## jbump Overview Tutorial
 
-Watch the following video oon YouTube that summarizes the use of jbump in the context of a platformer game:
+Watch the following video on YouTube that summarizes the use of jbump in the context of a platformer game:
 [Jbump AABB Collision Detection and Physics](https://youtu.be/IeU06Vzz2hA)
 
 Also, review these two example games to learn how jbump can be implemented in platformers and shooters:
