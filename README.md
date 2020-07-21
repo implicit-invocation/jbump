@@ -35,10 +35,10 @@ Using Gradle
 ```gradle
 // NOTE: this is not the "repositories" section inside "buildscript", so make sure to check where you're putting the repository!
 allprojects {
-		repositories {
-	  	// ...
-		  maven { url 'https://jitpack.io' }
-	 }
+  repositories {
+    // ...
+    maven { url 'https://jitpack.io' }
+  }
 }
 dependencies {
   // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
@@ -49,18 +49,20 @@ dependencies {
 Using Maven
 
 ```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
  ...
-	<dependency>
-	    <groupId>com.github.tommyettinger</groupId>
-	    <artifactId>jbump</artifactId>
-	    <version>4e78b3b334</version> <!-- check JitPack for other versions if you want a newer one -->
-	</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>com.github.tommyettinger</groupId>
+      <artifactId>jbump</artifactId>
+      <version>4e78b3b334</version> <!-- check JitPack for other versions if you want a newer one -->
+    </dependency>
+  </dependencies>
 ```
 
 HTML5(GWT) is supported by adding the sources dependency to the project:
