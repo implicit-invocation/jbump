@@ -190,11 +190,11 @@ Each `Collision` reports various data on the contact between the items:
 * other = an item colliding with the item being moved.
 * type = the result of `filter(other)`. It's usually "touch", "cross", "slide", or "bounce".
 * overlaps = boolean. True if item "was overlapping" other when the collision started.  
-False if it didn't but "tunneled" through other.
+  False if it didn't but "tunneled" through other.
 * ti = float between 0 and 1. How far along the movement to the goal did the collision occur.
 * move = The difference between the original coordinates and the actual ones in x and y values.
 * normal = The collision normal indicating the side the item hit other; integer -1, 0 or 1 in `x` and `y` 
-Useful in detecting if the player hit the ground or is pushing against the side of a wall.
+  Useful in detecting if the player hit the ground or is pushing against the side of a wall.
 * touch = The coordinates where item started touching other
 * itemRect = The rectangle item occupied when the touch happened
 * otherRect = The rectangle other occupied when the touch happened
@@ -204,8 +204,8 @@ Useful in detecting if the player hit the ground or is pushing against the side 
 World is in `tileMode` by default. jbump will do additional sorting logic to avoid `Item` getting stuck between tiles.
 You can disable `tileMode` if you are not using tiles to increase performance under certain circumstances.
 
-Otherwise, you can fine tune the `cellSize` of each cell used internally: the world is broken up into a static-grid used 
-for space-indexing of the different objects to reduce the number of collision checks necessary every frame. Use the 
+Otherwise, you can fine tune the `cellSize` of each cell used internally: the world is broken up into a grid, which
+holds the different objects in cells to reduce the number of collision checks necessary every frame. Use the 
 following World constructor:
 
 ```java
