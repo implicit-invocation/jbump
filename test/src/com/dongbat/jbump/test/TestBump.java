@@ -176,6 +176,10 @@ public class TestBump extends ApplicationAdapter {
                 tempVector.rotate(debugMagnitude);
                 tempVector.add(x, y);
                 world.querySegmentWithCoords(x, y, tempVector.x, tempVector.y, CollisionFilter.defaultFilter, infos);
+                items.clear();
+                for (ItemInfo info : infos) {
+                    items.add(info.item);
+                }
                 if (infos.size() == 0) {
                     shapeDrawer.line(x, y, tempVector.x, tempVector.y);
                 } else {
