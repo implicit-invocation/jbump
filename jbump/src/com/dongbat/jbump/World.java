@@ -32,6 +32,7 @@ public class World<E> {
 //  private final HashMap<Float, HashMap<Float, Cell>> rows = new HashMap<Float, HashMap<Float, Cell>>();
   private final HashMap<Point, Cell> cellMap = new HashMap<Point, Cell>();
   private final HashSet<Cell> nonEmptyCells = new HashSet<Cell>();
+  private float cellMinX, cellMinY, cellMaxX, cellMaxY;
   private final Grid grid = new Grid();
   private final RectHelper rectHelper = new RectHelper();
   private boolean tileMode = true;
@@ -59,6 +60,10 @@ public class World<E> {
     if(cell == null) {
       cell = new Cell();
       cellMap.put(pt, cell);
+      if (cx < cellMinX) cellMinX = cx;
+      if (cy < cellMinY) cellMinY = cy;
+      if (cx > cellMaxX) cellMaxX = cx;
+      if (cy > cellMaxY) cellMaxY = cy;
     }
     nonEmptyCells.add(cell);
     if (!cell.items.contains(item)) {
@@ -101,7 +106,7 @@ public class World<E> {
 
   private final ArrayList<Cell> getCellsTouchedBySegment_visited = new ArrayList<Cell>();
 
-  private ArrayList<Cell> getCellsTouchedBySegment(float x1, float y1, float x2, float y2, final ArrayList<Cell> result) {
+  public ArrayList<Cell> getCellsTouchedBySegment(float x1, float y1, float x2, float y2, final ArrayList<Cell> result) {
     result.clear();
     getCellsTouchedBySegment_visited.clear();
     // use set
@@ -109,15 +114,46 @@ public class World<E> {
     final Point pt = new Point(x1, y1);
     grid.grid_traverse(cellSize, x1, y1, x2, y2, new TraverseCallback() {
       @Override
-      public void onTraverse(float cx, float cy) {
+      public boolean onTraverse(float cx, float cy, int stepX, int stepY) {
+        //stop if cell coordinates are outside of the world.
+        if (stepX == -1 && cx < cellMinX || stepX == 1 && cx > cellMaxX
+                || stepY == -1 && cy < cellMinY || stepY == 1 && cy > cellMaxY) return false;
         pt.x = cx;
         pt.y = cy;
         Cell cell = cellMap.get(pt);
         if (cell == null || visited.contains(cell)) {
-          return;
+          return true;
         }
         visited.add(cell);
         result.add(cell);
+        return true;
+      }
+    });
+
+    return result;
+  }
+  
+  public ArrayList<Cell> getCellsTouchedByRay(float originX, float originY, float dirX, float dirY, final ArrayList<Cell> result) {
+    result.clear();
+    getCellsTouchedBySegment_visited.clear();
+    // use set
+    final ArrayList<Cell> visited = getCellsTouchedBySegment_visited;
+    final Point pt = new Point(originX, originY);
+    grid.grid_traverseRay(cellSize, originX, originY, dirX, dirY, new TraverseCallback() {
+      @Override
+      public boolean onTraverse(float cx, float cy, int stepX, int stepY) {
+        //stop if cell coordinates are outside of the world.
+        if (stepX == -1 && cx < cellMinX || stepX == 1 && cx > cellMaxX
+                || stepY == -1 && cy < cellMinY || stepY == 1 && cy > cellMaxY) return false;
+        pt.x = cx;
+        pt.y = cy;
+        Cell cell = cellMap.get(pt);
+        if (cell == null || visited.contains(cell)) {
+          return true;
+        }
+        visited.add(cell);
+        result.add(cell);
+        return true;
       }
     });
 
@@ -155,6 +191,35 @@ public class World<E> {
                 float tii1 = info_ti.y;
                 infos.add(new ItemInfo(item, ti1, ti2, Math.min(tii0, tii1)));
               }
+            }
+          }
+        }
+      }
+    }
+    Collections.sort(infos, weightComparator);
+    return infos;
+  }
+  
+  private ArrayList<ItemInfo> getInfoAboutItemsTouchedByRay(float originX, float originY, float dirX, float dirY, CollisionFilter filter, ArrayList<ItemInfo> infos) {
+    info_visited.clear();
+    infos.clear();
+    getCellsTouchedByRay(originX, originY, dirX, dirY, info_cells);
+    
+    for (Cell cell : info_cells) {
+      for (Item item : cell.items) {
+        if (!info_visited.contains(item)) {
+          info_visited.add(item);
+          if (filter == null || filter.filter(item, null) != null) {
+            Rect rect = rects.get(item);
+            float l = rect.x;
+            float t = rect.y;
+            float w = rect.w;
+            float h = rect.h;
+            
+            if (rect_getSegmentIntersectionIndices(l, t, w, h, originX, originY, originX + dirX, originY + dirY, 0, Float.MAX_VALUE, info_ti, info_normalX, info_normalY)) {
+              float ti1 = info_ti.x;
+              float ti2 = info_ti.y;
+              infos.add(new ItemInfo(item, ti1, ti2, Math.min(ti1, ti2)));
             }
           }
         }
@@ -471,6 +536,55 @@ public class World<E> {
       info.y1 = y1 + dy * ti1;
       info.x2 = x1 + dx * ti2;
       info.y2 = y1 + dy * ti2;
+    }
+    
+    return infos;
+  }
+  
+  /**
+   * A collision check of items that intersect the given ray.
+   * @param originX The x-origin of the ray.
+   * @param originY The y-origin of the ray.
+   * @param dirX The x component of the vector that defines the angle of the ray.
+   * @param dirY The y component of the vector that defines the angle of the ray.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null.
+   * @param items An empty list that will be filled with the {@link Item} instances that intersect the ray.
+   */
+  public ArrayList<Item> queryRay(float originX, float originY, float dirX, float dirY, CollisionFilter filter,  ArrayList<Item> items) {
+    items.clear();
+    ArrayList<ItemInfo> infos = getInfoAboutItemsTouchedByRay(originX, originY, dirX, dirY, filter, query_infos);
+    for (ItemInfo info : infos) {
+      items.add(info.item);
+    }
+    
+    return items;
+  }
+  
+  /**
+   * A collision check of items that intersect the given ray. Returns more details about where the collision
+   * occurs compared to {@link World#queryRay(float, float, float, float, CollisionFilter, ArrayList)}
+   * @param originX The x-origin of the ray.
+   * @param originY The y-origin of the ray.
+   * @param dirX The x component of the vector that defines the angle of the ray.
+   * @param dirY The y component of the vector that defines the angle of the ray.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null
+   * @param infos An empty list that will be filled with the collision information.
+   */
+  public ArrayList<ItemInfo> queryRayWithCoords(float originX, float originY, float dirX, float dirY, CollisionFilter filter, ArrayList<ItemInfo> infos) {
+    infos.clear();
+    infos = getInfoAboutItemsTouchedByRay(originX, originY, dirX, dirY, filter, infos);
+    
+    for (ItemInfo info : infos) {
+      float ti1 = info.ti1;
+      float ti2 = info.ti2;
+      
+      info.weight = 0;
+      info.x1 = originX + dirX * ti1;
+      info.y1 = originY + dirY * ti1;
+      info.x2 = originX + dirX * ti2;
+      info.y2 = originY + dirY * ti2;
     }
     
     return infos;
