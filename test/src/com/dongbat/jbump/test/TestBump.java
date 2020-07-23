@@ -51,7 +51,7 @@ public class TestBump extends ApplicationAdapter {
     public BitmapFont font;
     public Mode mode;
     public enum Mode {
-        POINT, RECT, SEGMENT, SEGMENT_WITH_COORDS
+        POINT, RECT, SEGMENT, SEGMENT_WITH_COORDS, RAY, RAY_WITH_COORDS
     }
     public int debugMagnitude;
     public static final int DEBUG_VALUE_INCREASE = 15;
@@ -182,6 +182,27 @@ public class TestBump extends ApplicationAdapter {
                 }
                 if (infos.size() == 0) {
                     shapeDrawer.line(x, y, tempVector.x, tempVector.y);
+                } else {
+                    shapeDrawer.line(x, y, infos.get(0).x1, infos.get(0).y1);
+                }
+                break;
+            case RAY:
+                tempVector.set(1, 0);
+                tempVector.rotate(debugMagnitude);
+                tempVector.scl(DEBUG_SEGMENT_LENGTH);
+                world.queryRay(x, y, tempVector.x, tempVector.y, CollisionFilter.defaultFilter, items);
+                shapeDrawer.line(x, y, x + tempVector.x, y + tempVector.y);
+                break;
+            case RAY_WITH_COORDS: //collision check of line segment with drawing ending at closest collision point
+                tempVector.set(DEBUG_SEGMENT_LENGTH, 0);
+                tempVector.rotate(debugMagnitude);
+                world.queryRayWithCoords(x, y, tempVector.x, tempVector.y, CollisionFilter.defaultFilter, infos);
+                items.clear();
+                for (ItemInfo info : infos) {
+                    items.add(info.item);
+                }
+                if (infos.size() == 0) {
+                    shapeDrawer.line(x, y, x + tempVector.x, y + tempVector.y);
                 } else {
                     shapeDrawer.line(x, y, infos.get(0).x1, infos.get(0).y1);
                 }
