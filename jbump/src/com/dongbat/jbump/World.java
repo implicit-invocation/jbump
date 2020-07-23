@@ -106,7 +106,7 @@ public class World<E> {
 
   private final ArrayList<Cell> getCellsTouchedBySegment_visited = new ArrayList<Cell>();
 
-  private ArrayList<Cell> getCellsTouchedBySegment(float x1, float y1, float x2, float y2, final ArrayList<Cell> result) {
+  public ArrayList<Cell> getCellsTouchedBySegment(float x1, float y1, float x2, float y2, final ArrayList<Cell> result) {
     result.clear();
     getCellsTouchedBySegment_visited.clear();
     // use set
