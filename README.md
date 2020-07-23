@@ -27,7 +27,7 @@ documentation.
 
 ## Installation
 
-You can directly [download the jar file from JitPack](https://jitpack.io/com/github/tommyettinger/jbump/4e78b3b334/jbump-4e78b3b334.jar),
+You can directly [download the jar file from JitPack](https://jitpack.io/com/github/tommyettinger/jbump/659fea75c3/jbump-659fea75c3.jar),
 or you can use a project management tool like Maven or Gradle.
 
 Using Gradle
@@ -42,7 +42,7 @@ allprojects {
 }
 dependencies {
   // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
-  implementation 'com.github.tommyettinger:jbump:4e78b3b334' // check JitPack for other versions if you want a newer one
+  implementation 'com.github.tommyettinger:jbump:659fea75c3' // check JitPack for other versions if you want a newer one
 }
 ```  
 
@@ -60,7 +60,7 @@ Using Maven
     <dependency>
       <groupId>com.github.tommyettinger</groupId>
       <artifactId>jbump</artifactId>
-      <version>4e78b3b334</version> <!-- check JitPack for other versions if you want a newer one -->
+      <version>659fea75c3</version> <!-- check JitPack for other versions if you want a newer one -->
     </dependency>
   </dependencies>
 ```
@@ -74,7 +74,7 @@ project(":html") {
   dependencies {
     ...
     // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
-    implementation 'com.github.tommyettinger:jbump:4e78b3b334:sources'
+    implementation 'com.github.tommyettinger:jbump:659fea75c3:sources'
   }
 }
 ``` 
@@ -89,8 +89,8 @@ You must also add the inherits line to the GdxDefinition.gwt.xml file of your HT
 ```
 
 The latest commit version can be looked up [here, on JitPack's page for jbump](https://jitpack.io/#tommyettinger/jbump),
-under the Commits tab. You can copy any of those 10-hex-digit identifiers for a commit and replace `4e78b3b334` with your
-commit of choice to change version.
+under the Commits tab. You can copy any of those 10-hex-digit identifiers for a commit and replace `659fea75c3` with your
+commit of choice to change version. You can also just look at the green JitPack bar at the top of this README.md .
 
 ## Usage
 
