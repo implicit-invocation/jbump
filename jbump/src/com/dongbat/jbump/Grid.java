@@ -78,7 +78,7 @@ public class Grid {
     /*The default implementation had an infinite loop problem when
     approaching the last cell in some occasions. We finish iterating
     when we are *next* to the last cell*/
-    boolean cont = true;
+    boolean cont = true; //stop iterating if TraverseCallback reports that cell coordinates are outside of the world.
     while (abs(cx - cx2) + abs(cy - cy2) > 1 && cont) {
       if (tx < ty) {
         tx = tx + dx;
@@ -115,7 +115,7 @@ public class Grid {
     
     f.onTraverse(cx, cy, stepX, stepY);
     
-    boolean cont = true;
+    boolean cont = true; //stop iterating if TraverseCallback reports that cell coordinates are outside of the world.
     while (cont) {
       if (tx < ty) {
         cx = cx + stepX;

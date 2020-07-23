@@ -221,22 +221,24 @@ cell rules still apply to the world.
 ## Querying the World
 
 Instead of checking for collisions with direct bounding box to bounding box tests, you can also use `World` query methods. 
-Arbitrarily positioned point, rectangle, and segment queries are available:
+Arbitrarily positioned point, rectangle, segment, and ray queries are available:
 * Point: `world.queryPoint(x, y, filter, items);`
 * Rectangle: `world.queryRect(x, y, width, height, filter, items);`
 * Segment: `world.querySegment(x1, y1, x2, y2, filter, items);`
+* Ray: `world.queryRay(originX, originY, dirX, dirY, filter, items);`
 
 `items` is an empty list that will be filled with all the items that collide with the given shape. `filter` is the 
 `CollisionFilter` that defines what items would be tested. Use `CollisionFilter.defaultFilter` to test all items. If 
 you create a custom filter, return null to not accept an item. To accept, return any kind of `Response`. `item` is the 
 item that would be tested. `other` is always null in this case.
 
-A more detailed segment query is available:
+More detailed segment and ray queries are available:
 * Segment with Coords: `world.querySegmentWithCoords(x1, y1, x2, y2, filter, infos);`
+* Ray with Coords: `world.querySegmentWithCoords(originX, originY, dirX, dirY, filter, infos);`
 
 `infos` is a more detailed list of collision information. The (x1, y1) coordinates of `ItemInfo` define where the 
-segment intersects the `Item`. This is helpful for drawing particle effects where a bullet enters a body, for example. 
-The (x2, y2) coordinates define where the segment exits the item, which is great for drawing an exit wound. (ti1, ti2) 
+segment/ray intersects the `Item`. This is helpful for drawing particle effects where a bullet enters a body, for example. 
+The (x2, y2) coordinates define where the segment/ray exits the item, which is great for drawing an exit wound. (ti1, ti2) 
 are values between 0 and 1 that define how far from the starting point the impact happened. This can be used to 
 describe an effect that weakens with distance.
 

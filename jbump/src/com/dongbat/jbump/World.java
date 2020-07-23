@@ -115,6 +115,7 @@ public class World<E> {
     grid.grid_traverse(cellSize, x1, y1, x2, y2, new TraverseCallback() {
       @Override
       public boolean onTraverse(float cx, float cy, int stepX, int stepY) {
+        //stop if cell coordinates are outside of the world.
         if (stepX == -1 && cx < cellMinX || stepX == 1 && cx > cellMaxX
                 || stepY == -1 && cy < cellMinY || stepY == 1 && cy > cellMaxY) return false;
         pt.x = cx;
@@ -141,6 +142,7 @@ public class World<E> {
     grid.grid_traverseRay(cellSize, originX, originY, dirX, dirY, new TraverseCallback() {
       @Override
       public boolean onTraverse(float cx, float cy, int stepX, int stepY) {
+        //stop if cell coordinates are outside of the world.
         if (stepX == -1 && cx < cellMinX || stepX == 1 && cx > cellMaxX
                 || stepY == -1 && cy < cellMinY || stepY == 1 && cy > cellMaxY) return false;
         pt.x = cx;
@@ -539,6 +541,16 @@ public class World<E> {
     return infos;
   }
   
+  /**
+   * A collision check of items that intersect the given ray.
+   * @param originX The x-origin of the ray.
+   * @param originY The y-origin of the ray.
+   * @param dirX The x component of the vector that defines the angle of the ray.
+   * @param dirY The y component of the vector that defines the angle of the ray.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null.
+   * @param items An empty list that will be filled with the {@link Item} instances that intersect the ray.
+   */
   public ArrayList<Item> queryRay(float originX, float originY, float dirX, float dirY, CollisionFilter filter,  ArrayList<Item> items) {
     items.clear();
     ArrayList<ItemInfo> infos = getInfoAboutItemsTouchedByRay(originX, originY, dirX, dirY, filter, query_infos);
@@ -549,6 +561,17 @@ public class World<E> {
     return items;
   }
   
+  /**
+   * A collision check of items that intersect the given ray. Returns more details about where the collision
+   * occurs compared to {@link World#queryRay(float, float, float, float, CollisionFilter, ArrayList)}
+   * @param originX The x-origin of the ray.
+   * @param originY The y-origin of the ray.
+   * @param dirX The x component of the vector that defines the angle of the ray.
+   * @param dirY The y component of the vector that defines the angle of the ray.
+   * @param filter Defines what items will be checked for collision. "item" is the {@link Item} checked for collision.
+   *               "other" is null
+   * @param infos An empty list that will be filled with the collision information.
+   */
   public ArrayList<ItemInfo> queryRayWithCoords(float originX, float originY, float dirX, float dirY, CollisionFilter filter, ArrayList<ItemInfo> infos) {
     infos.clear();
     infos = getInfoAboutItemsTouchedByRay(originX, originY, dirX, dirY, filter, infos);
