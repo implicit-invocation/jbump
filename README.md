@@ -27,7 +27,7 @@ documentation.
 
 ## Installation
 
-You can directly [download the jar file from JitPack](https://jitpack.io/com/github/tommyettinger/jbump/659fea75c3/jbump-659fea75c3.jar),
+You can directly [download the jar file from JitPack](https://jitpack.io/com/github/tommyettinger/jbump/v1.0.0/jbump-v1.0.0.jar),
 or you can use a project management tool like Maven or Gradle.
 
 Using Gradle
@@ -42,7 +42,7 @@ allprojects {
 }
 dependencies {
   // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
-  implementation 'com.github.tommyettinger:jbump:659fea75c3' // check JitPack for other versions if you want a newer one
+  implementation 'com.github.tommyettinger:jbump:v1.0.0' // check JitPack for other versions if you want a specific/newer one
 }
 ```  
 
@@ -60,7 +60,7 @@ Using Maven
     <dependency>
       <groupId>com.github.tommyettinger</groupId>
       <artifactId>jbump</artifactId>
-      <version>659fea75c3</version> <!-- check JitPack for other versions if you want a newer one -->
+      <version>v1.0.0</version> <!-- check JitPack for other versions if you want a newer one -->
     </dependency>
   </dependencies>
 ```
@@ -74,12 +74,12 @@ project(":html") {
   dependencies {
     ...
     // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
-    implementation 'com.github.tommyettinger:jbump:659fea75c3:sources'
+    implementation 'com.github.tommyettinger:jbump:v1.0.0:sources'
   }
 }
 ``` 
 
-You must also add the inherits line to the GdxDefinition.gwt.xml file of your HTML project:
+If using GWT, you must also add the inherits line to the GdxDefinition.gwt.xml file of your HTML project:
 
 ```xml
 <module rename-to="html">
@@ -89,7 +89,7 @@ You must also add the inherits line to the GdxDefinition.gwt.xml file of your HT
 ```
 
 The latest commit version can be looked up [here, on JitPack's page for jbump](https://jitpack.io/#tommyettinger/jbump),
-under the Commits tab. You can copy any of those 10-hex-digit identifiers for a commit and replace `659fea75c3` with your
+under the Commits tab. You can copy any of those 10-hex-digit identifiers for a commit and replace `v1.0.0` with your
 commit of choice to change version. You can also just look at the green JitPack bar at the top of this README.md .
 
 ## Usage
@@ -218,7 +218,7 @@ World<Entity> world = new World<Entity>(32f);
 This value defaults to 64f, which is fine for most use. However, it should be set to a multiple of your tile size in 
 world units for tile-based games. For example, if you're using pixel units and your tiles are 32x32 pixels, cellSize 
 could be 32f, 64f, 128f, etc. If you're using meters and your tiles are 1x1 meters, cellSize could be 1f, 2f, 4f. Set 
-this value lower/higher to tweak performance. Note that you do not have to have a Tile based game to use jbump, but the
+this value lower/higher to tweak performance. Note that you do not have to have a tile-based game to use jbump, but the
 cell rules still apply to the world.
 
 ## Querying the World
