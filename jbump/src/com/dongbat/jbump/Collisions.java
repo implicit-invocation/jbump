@@ -51,9 +51,38 @@ public class Collisions implements Comparator<Integer> {
   public ArrayList<Item> others = new ArrayList<Item>();
   public ArrayList<Response> types = new ArrayList<Response>();
   private int size = 0;
-
+  
+  public Collisions() {
+    
+  }
+  
+  public Collisions(Collisions other) {
+    overlaps.addAll(other.overlaps);
+    tis.addAll(other.tis);
+    moveXs.addAll(other.moveXs);
+    moveYs.addAll(other.moveYs);
+    normalXs.addAll(other.normalXs);
+    normalYs.addAll(other.normalYs);
+    touchXs.addAll(other.touchXs);
+    touchYs.addAll(other.touchYs);
+    x1s.addAll(other.x1s);
+    y1s.addAll(other.y1s);
+    w1s.addAll(other.w1s);
+    h1s.addAll(other.h1s);
+    x2s.addAll(other.x2s);
+    y2s.addAll(other.y2s);
+    w2s.addAll(other.w2s);
+    h2s.addAll(other.h2s);
+    items.addAll(other.items);
+    others.addAll(other.others);
+    types.addAll(other.types);
+    size = other.size;
+  }
+  
   public void add(Collision col) {
-    add(col.overlaps, col.ti, col.move.x, col.move.y, col.normal.x, col.normal.y, col.touch.x, col.touch.y, col.itemRect.x, col.itemRect.y, col.itemRect.w, col.itemRect.h, col.otherRect.x, col.otherRect.y, col.otherRect.w, col.otherRect.h, col.item, col.other, col.type);
+    add(col.overlaps, col.ti, col.move.x, col.move.y, col.normal.x, col.normal.y, col.touch.x, col.touch.y,
+            col.itemRect.x, col.itemRect.y, col.itemRect.w, col.itemRect.h, col.otherRect.x, col.otherRect.y,
+            col.otherRect.w, col.otherRect.h, col.item, col.other, col.type);
   }
 
   public void add(boolean overlap, float ti, float moveX, float moveY, int normalX, int normalY, float touchX, float touchY,
