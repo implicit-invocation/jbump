@@ -284,7 +284,19 @@ public class World<E> {
   public Rect getRect(Item item) {
     return rects.get(item);
   }
+  
+  public Set<Item> getItems() {
+    return rects.keySet();
+  }
+  
+  public Collection<Rect> getRects() {
+    return rects.values();
+  }
 
+  public Collection<Cell> getCells() {
+    return cellMap.values(); 
+  }
+  
   public int countCells() { 
     return cellMap.size();
   }
