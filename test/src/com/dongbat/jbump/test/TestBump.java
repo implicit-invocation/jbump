@@ -267,6 +267,13 @@ public class TestBump extends ApplicationAdapter {
             if (Gdx.input.isKeyPressed(Keys.S)) {
                 y -= MOVE_SPEED * delta;
             }
+            
+            if (Gdx.input.isKeyJustPressed(Keys.I)) {
+                for (Item item : world.getItems()) {
+                    Entity entity = (Entity) item.userData;
+                    System.out.println(entity.getClass().getSimpleName() + " " + entity.x + " " + entity.y + " " + entity.width + " " + entity.height);
+                }
+            }
     
             Result result = world.move(item, x, y, CollisionFilter.defaultFilter);
             //comment out the following lines to unbind entity position to physics position ------
