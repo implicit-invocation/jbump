@@ -340,6 +340,12 @@ public class World<E> {
       }
     }
   }
+  
+  public void reset() {
+    rects.clear();
+    cellMap.clear();
+    nonEmptyCells.clear();
+  }
 
   public void update(Item item, float x2, float y2) {
     Rect rect = getRect(item);
