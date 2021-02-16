@@ -14,7 +14,7 @@ buildscript {
 
 allprojects {
     group = 'com.github.implicit-invocation'
-    version = '1.0.0'
+    version = '1.0.1'
 
     repositories {
         mavenLocal()
@@ -52,9 +52,9 @@ project(":test") {
 
     dependencies {
         implementation project(":jbump")
-        api "com.badlogicgames.gdx:gdx:1.9.10"
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.9.10"
-        api "com.badlogicgames.gdx:gdx-platform:1.9.10:natives-desktop"
-        implementation "space.earlygrey:shapedrawer:2.3.0"
+        implementation "com.badlogicgames.gdx:gdx:1.9.13"
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.9.13"
+        implementation "com.badlogicgames.gdx:gdx-platform:1.9.13:natives-desktop"
+        implementation "space.earlygrey:shapedrawer:2.4.0"
     }
 }

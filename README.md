@@ -27,7 +27,7 @@ documentation.
 
 ## Installation
 
-You can directly [download the jar file from JitPack](https://jitpack.io/com/github/tommyettinger/jbump/v1.0.0/jbump-v1.0.0.jar),
+You can directly [download the jar file from JitPack](https://jitpack.io/com/github/tommyettinger/jbump/v1.0.1/jbump-v1.0.1.jar),
 or you can use a project management tool like Maven or Gradle.
 
 Using Gradle
@@ -42,7 +42,7 @@ allprojects {
 }
 dependencies {
   // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
-  implementation 'com.github.tommyettinger:jbump:v1.0.0' // check JitPack for other versions if you want a specific/newer one
+  implementation 'com.github.tommyettinger:jbump:v1.0.1' // check JitPack for other versions if you want a specific/newer one
 }
 ```  
 
@@ -60,7 +60,7 @@ Using Maven
     <dependency>
       <groupId>com.github.tommyettinger</groupId>
       <artifactId>jbump</artifactId>
-      <version>v1.0.0</version> <!-- check JitPack for other versions if you want a newer one -->
+      <version>v1.0.1</version> <!-- check JitPack for other versions if you want a newer one -->
     </dependency>
   </dependencies>
 ```
@@ -74,7 +74,7 @@ project(":html") {
   dependencies {
     ...
     // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
-    implementation 'com.github.tommyettinger:jbump:v1.0.0:sources'
+    implementation 'com.github.tommyettinger:jbump:v1.0.1:sources'
   }
 }
 ``` 
@@ -89,7 +89,7 @@ If using GWT, you must also add the inherits line to the GdxDefinition.gwt.xml f
 ```
 
 The latest commit version can be looked up [here, on JitPack's page for jbump](https://jitpack.io/#tommyettinger/jbump),
-under the Commits tab. You can copy any of those 10-hex-digit identifiers for a commit and replace `v1.0.0` with your
+under the Commits tab. You can copy any of those 10-hex-digit identifiers for a commit and replace `v1.0.1` with your
 commit of choice to change version. You can also just look at the green JitPack bar at the top of this README.md .
 
 ## Usage
