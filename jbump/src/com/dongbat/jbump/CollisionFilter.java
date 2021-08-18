@@ -19,14 +19,14 @@ package com.dongbat.jbump;
  *
  * @author tao
  */
-public class Item<E> {
-
-  public E userData;
-
-  public Item() {
-  }
-
-  public Item(E userData) {
-    this.userData = userData;
-  }
+public interface CollisionFilter {
+  
+  Response filter(Item item, Item other);
+  
+  CollisionFilter defaultFilter = new CollisionFilter() {
+    @Override
+    public Response filter(Item item, Item other) {
+      return Response.slide;
+    }
+  };
 }

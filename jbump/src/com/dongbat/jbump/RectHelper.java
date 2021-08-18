@@ -15,8 +15,8 @@
  */
 package com.dongbat.jbump;
 
-import static com.dongbat.jbump.Aux.DELTA;
-import static com.dongbat.jbump.Aux.sign;
+import static com.dongbat.jbump.Extra.DELTA;
+import static com.dongbat.jbump.Extra.sign;
 import static com.dongbat.jbump.Rect.rect_containsPoint;
 import static com.dongbat.jbump.Rect.rect_getDiff;
 import static com.dongbat.jbump.Rect.rect_getNearestCorner;
@@ -33,8 +33,8 @@ public class RectHelper {
   private final Rect rect_detectCollision_diff = new Rect();
   private final Point rect_detectCollision_nearestCorner = new Point();
   private final Point rect_detectCollision_getSegmentIntersectionIndices_ti = new Point();
-  private final Point rect_detectCollision_getSegmentIntersectionIndices_n1 = new Point();
-  private final Point rect_detectCollision_getSegmentIntersectionIndices_n2 = new Point();
+  private final IntPoint rect_detectCollision_getSegmentIntersectionIndices_n1 = new IntPoint();
+  private final IntPoint rect_detectCollision_getSegmentIntersectionIndices_n2 = new IntPoint();
   private final Collision rect_detectCollision_getSegmentIntersectionIndices_col = new Collision();
 
   public Collision rect_detectCollision(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2,
@@ -51,24 +51,28 @@ public class RectHelper {
 
     boolean overlaps = false;
     Float ti = null;
-    float nx = 0, ny = 0;
+    int nx = 0, ny = 0;
 
     if (rect_containsPoint(x, y, w, h, 0, 0)) {
+      //item was intersecting other
       rect_getNearestCorner(x, y, w, h, 0, 0, rect_detectCollision_nearestCorner);
       float px = rect_detectCollision_nearestCorner.x;
       float py = rect_detectCollision_nearestCorner.y;
+  
+      //area of intersection
       float wi = min(w1, abs(px));
       float hi = min(h1, abs(py));
-      ti = -wi * h1;
+      ti = -wi * hi; //ti is the negative area of intersection
       overlaps = true;
     } else {
       boolean intersect = rect_getSegmentIntersectionIndices(x, y, w, h, 0, 0, dx, dy, -Float.MAX_VALUE, Float.MAX_VALUE, rect_detectCollision_getSegmentIntersectionIndices_ti, rect_detectCollision_getSegmentIntersectionIndices_n1, rect_detectCollision_getSegmentIntersectionIndices_n2);
       float ti1 = rect_detectCollision_getSegmentIntersectionIndices_ti.x;
       float ti2 = rect_detectCollision_getSegmentIntersectionIndices_ti.y;
-      float nx1 = rect_detectCollision_getSegmentIntersectionIndices_n1.x;
-      float ny1 = rect_detectCollision_getSegmentIntersectionIndices_n1.y;
+      int nx1 = rect_detectCollision_getSegmentIntersectionIndices_n1.x;
+      int ny1 = rect_detectCollision_getSegmentIntersectionIndices_n1.y;
 
-      if (intersect && ti1 < 1 && abs(ti1 - ti2) >= DELTA
+      //item tunnels into other
+      if (intersect && ti1 < 1 && abs(ti1 - ti2) >= DELTA //special case for rect going through another rect's corner
         && (0 < ti1 + DELTA || 0 == ti1 && ti2 > 0)) {
         ti = ti1;
         nx = nx1;
@@ -83,6 +87,7 @@ public class RectHelper {
 
     if (overlaps) {
       if (dx == 0 && dy == 0) {
+        //intersecting and not moving - use minimum displacement vector
         rect_getNearestCorner(x, y, w, h, 0, 0, rect_detectCollision_nearestCorner);
         float px = rect_detectCollision_nearestCorner.x;
         float py = rect_detectCollision_nearestCorner.y;
@@ -96,6 +101,7 @@ public class RectHelper {
         tx = x1 + px;
         ty = y1 + py;
       } else {
+        //intersecting and moving - move in the opposite direction
         boolean intersect = rect_getSegmentIntersectionIndices(x, y, w, h, 0, 0, dx, dy, -Float.MAX_VALUE, 1, rect_detectCollision_getSegmentIntersectionIndices_ti, rect_detectCollision_getSegmentIntersectionIndices_n1, rect_detectCollision_getSegmentIntersectionIndices_n2);
         float ti1 = rect_detectCollision_getSegmentIntersectionIndices_ti.x;
         nx = rect_detectCollision_getSegmentIntersectionIndices_n1.x;
@@ -107,6 +113,7 @@ public class RectHelper {
         ty = y1 + dy * ti1;
       }
     } else {
+      //tunnel
       tx = x1 + dx * ti;
       ty = y1 + dy * ti;
     }

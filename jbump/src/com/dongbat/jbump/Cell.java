@@ -15,7 +15,7 @@
  */
 package com.dongbat.jbump;
 
-import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  *
@@ -25,5 +25,5 @@ public class Cell {
   public int itemCount = 0;
   public float x;
   public float y;
-  public HashMap<Item, Boolean> items = new HashMap<Item, Boolean>();
+  public HashSet<Item> items = new HashSet<Item>();
 }

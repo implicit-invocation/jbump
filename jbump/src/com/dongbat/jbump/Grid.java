@@ -18,7 +18,10 @@ package com.dongbat.jbump;
 import static java.lang.Math.*;
 
 /**
- *
+ * grid_traverse* methods are based on "A Fast Voxel Traversal Algorithm for Ray Tracing",
+ * by John Amanides and Andrew Woo - http://www.cse.yorku.ca/~amana/research/grid.pdf
+ * It has been modified to include both cells when the ray "touches a grid corner",
+ * and with a different exit condition
  * @author tao
  */
 public class Grid {
@@ -45,9 +48,9 @@ public class Grid {
     }
   }
 
-  public static interface TraverseCallback {
+  public interface TraverseCallback {
 
-    public void onTraverse(float cx, float cy);
+    boolean onTraverse(float cx, float cy, int stepX, int stepY);
   }
 
   private final Point grid_traverse_c1 = new Point();
@@ -70,25 +73,63 @@ public class Grid {
     float ty = grid_traverse_initStepY.y;
     float cx = cx1, cy = cy1;
 
-    f.onTraverse(cx, cy);
+    f.onTraverse(cx, cy, stepX, stepY);
 
-    while (abs(cx - cx2) + abs(cy - cy2) > 1) {
+    /*The default implementation had an infinite loop problem when
+    approaching the last cell in some occasions. We finish iterating
+    when we are *next* to the last cell*/
+    boolean cont = true; //stop iterating if TraverseCallback reports that cell coordinates are outside of the world.
+    while (abs(cx - cx2) + abs(cy - cy2) > 1 && cont) {
       if (tx < ty) {
         tx = tx + dx;
         cx = cx + stepX;
-        f.onTraverse(cx, cy);
+        cont = f.onTraverse(cx, cy, stepX, stepY);
       } else {
+        //Addition: include both cells when going through corners
         if (tx == ty) {
-          f.onTraverse(cx + stepX, cy);
+          f.onTraverse(cx + stepX, cy, stepX, stepY);
         }
         ty = ty + dy;
         cy = cy + stepY;
-        f.onTraverse(cx, cy);
+        cont = f.onTraverse(cx, cy, stepX, stepY);
       }
     }
 
+    //If we have not arrived to the last cell, use it
     if (cx != cx2 || cy != cy2) {
-      f.onTraverse(cx2, cy2);
+      f.onTraverse(cx2, cy2, stepX, stepY);
+    }
+  }
+  
+  public void grid_traverseRay(float cellSize, float x1, float y1, float dirX, float dirY, TraverseCallback f) {
+    grid_toCell(cellSize, x1, y1, grid_traverse_c1);
+    float cx1 = grid_traverse_c1.x;
+    float cy1 = grid_traverse_c1.y;
+    int stepX = grid_traverse_initStep(cellSize, cx1, x1, x1 + dirX, grid_traverse_initStepX);
+    int stepY = grid_traverse_initStep(cellSize, cy1, y1, y1 + dirY, grid_traverse_initStepY);
+    float dx = grid_traverse_initStepX.x;
+    float tx = grid_traverse_initStepX.y;
+    float dy = grid_traverse_initStepY.x;
+    float ty = grid_traverse_initStepY.y;
+    float cx = cx1, cy = cy1;
+    
+    f.onTraverse(cx, cy, stepX, stepY);
+    
+    boolean cont = true; //stop iterating if TraverseCallback reports that cell coordinates are outside of the world.
+    while (cont) {
+      if (tx < ty) {
+        cx = cx + stepX;
+        cont = f.onTraverse(cx, cy, stepX, stepY);
+        tx = tx + dx;
+      } else {
+        //Addition: include both cells when going through corners
+        if (tx == ty) {
+          f.onTraverse(cx + stepX, cy, stepX, stepY);
+        }
+        cy = cy + stepY;
+        cont = f.onTraverse(cx, cy, stepX, stepY);
+        ty = ty + dy;
+      }
     }
   }
 

@@ -23,7 +23,7 @@ public class Collision {
   public boolean overlaps;
   public float ti;
   public Point move = new Point();
-  public Point normal = new Point();
+  public IntPoint normal = new IntPoint();
   public Point touch = new Point();
   public Rect itemRect = new Rect();
   public Rect otherRect = new Rect();
@@ -34,7 +34,7 @@ public class Collision {
   public Collision() {
   }
   
-  public void set(boolean overlaps, float ti, float moveX, float moveY, float normalX, float normalY, float touchX, float touchY,
+  public void set(boolean overlaps, float ti, float moveX, float moveY, int normalX, int normalY, float touchX, float touchY,
     float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) {
     this.overlaps = overlaps;
     this.ti = ti;
