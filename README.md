@@ -1,7 +1,7 @@
 # jbump
 
-[![](https://jitpack.io/v/tommyettinger/jbump.svg)](https://jitpack.io/#tommyettinger/jbump)  
-jbump is a Java port for bump.lua, a 2D AABB collision detection and response library.  
+[![](https://jitpack.io/v/implicit-invocation/jbump.svg)](https://jitpack.io/#implicit-invocation/jbump)  
+jbump is a Java port of bump.lua, a 2D AABB collision detection and response library.  
 Please see the [bump.lua README](https://github.com/kikito/bump.lua/blob/master/README.md) for the original
 documentation.
 
@@ -27,22 +27,26 @@ documentation.
 
 ## Installation
 
-You can directly [download the jar file from JitPack](https://jitpack.io/com/github/tommyettinger/jbump/v1.0.1/jbump-v1.0.1.jar),
+You can directly [download the jar file from JitPack](https://jitpack.io/com/github/implicit-invocation/jbump/v1.0.1/jbump-v1.0.1.jar),
 or you can use a project management tool like Maven or Gradle.
 
 Using Gradle
 
 ```gradle
 // NOTE: this is not the "repositories" section inside "buildscript", so make sure to check where you're putting the repository!
+// Both gdx-setup and gdx-liftoff already have this step done.
 allprojects {
   repositories {
     // ...
     maven { url 'https://jitpack.io' }
   }
 }
+// For projects made with gdx-setup, this goes in the core section of the root build.gradle .
+// For projects made with gdx-liftoff, this goes in core/build.gradle .
 dependencies {
+  // ...
   // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
-  implementation 'com.github.tommyettinger:jbump:v1.0.1' // check JitPack for other versions if you want a specific/newer one
+  implementation 'com.github.implicit-invocation:jbump:v1.0.1' // check JitPack for other versions if you want a specific/newer one
 }
 ```  
 
@@ -58,7 +62,7 @@ Using Maven
  ...
   <dependencies>
     <dependency>
-      <groupId>com.github.tommyettinger</groupId>
+      <groupId>com.github.implicit-invocation</groupId>
       <artifactId>jbump</artifactId>
       <version>v1.0.1</version> <!-- check JitPack for other versions if you want a newer one -->
     </dependency>
@@ -68,13 +72,13 @@ Using Maven
 HTML5(GWT) is supported by adding the sources dependency to the project:
 
 ```gradle
+// For gdx-setup projects, use the html section of the root build.gradle ; for gdx-liftoff, use html/build.gradle .
 project(":html") {
-  ...
+  // ...
 
   dependencies {
-    ...
-    // you may need to use "api" instead of "implementation" in a multi-module project, like most libGDX projects
-    implementation 'com.github.tommyettinger:jbump:v1.0.1:sources'
+    // ...
+    implementation 'com.github.implicit-invocation:jbump:v1.0.1:sources'
   }
 }
 ``` 
@@ -88,7 +92,7 @@ If using GWT, you must also add the inherits line to the GdxDefinition.gwt.xml f
 </module>
 ```
 
-The latest commit version can be looked up [here, on JitPack's page for jbump](https://jitpack.io/#tommyettinger/jbump),
+The latest commit version can be looked up [here, on JitPack's page for jbump](https://jitpack.io/#implicit-invocation/jbump),
 under the Commits tab. You can copy any of those 10-hex-digit identifiers for a commit and replace `v1.0.1` with your
 commit of choice to change version. You can also just look at the green JitPack bar at the top of this README.md .
 
@@ -254,4 +258,4 @@ Also, review these two example games to learn how jbump can be implemented in pl
 [jbumpexample by raeleus](https://github.com/raeleus/jbumpexample)
 
 The test class demonstrates the use the query methods, among other important examples:
-[TestBump.java](https://github.com/tommyettinger/jbump/blob/master/test/src/com/dongbat/jbump/test/TestBump.java)
+[TestBump.java](https://github.com/implicit-invocation/jbump/blob/master/test/src/com/dongbat/jbump/test/TestBump.java)
