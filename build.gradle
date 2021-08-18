@@ -2,59 +2,101 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        jcenter()
-        google()
+        gradlePluginPortal()
     }
     dependencies {
-
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.17.0'
     }
 }
 
 allprojects {
     group = 'com.github.implicit-invocation'
-    version = '1.0.1'
+    version = "$VERSION_NAME"
 
     repositories {
         mavenLocal()
         mavenCentral()
-        jcenter()
-        google()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url 'https://jitpack.io' }
+        gradlePluginPortal()
+    }
+}
+
+// Disable JDK 8's doclint
+// http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            // The -quiet is because of some sort of weird JDK JavaCompiler bug:
+            // https://discuss.gradle.org/t/passing-arguments-to-compiler-and-javadoc/1661
+            options.addStringOption('Xdoclint:none,-missing', '-quiet')
+            options.tags('apiNote:a:"API Note"', 'implSpec:a:"Implementation Requirements"', 'implNote:a:"Implementation Note"')
+        }
+    }
+}
+
+
+if(JavaVersion.current().isJava9Compatible()) {
+    allprojects {
+        tasks.withType(JavaCompile) {
+            options.release.set(8)
+        }
     }
 }
 
 project(":jbump") {
     apply plugin: 'java-library'
-    apply plugin: 'maven'
+    apply plugin: 'com.vanniktech.maven.publish'
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+    if (JavaVersion.current().isJava9Compatible()) {
+        compileJava.targetCompatibility = 8
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
+    def projectName = 'jbump'
+    version "$VERSION_NAME"
+    group 'com.github.implicit-invocation'
+
+    jar {
+        archiveBaseName.set(projectName)
+        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        manifest {
+            attributes 'Implementation-Title': projectName, 'Implementation-Version': archiveVersion
+        }
     }
 
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-    }
 }
 
 project(":test") {
     apply plugin: "java-library"
 
+    def projectName = 'jbump-test'
+    version "$VERSION_NAME"
+    group 'com.github.implicit-invocation'
+
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    jar {
+        manifest {
+            attributes 'Main-Class': "com.dongbat.jbump.test.TestBump"
+        }
+        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+        exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+        dependencies {
+            exclude('META-INF/INDEX.LIST', 'META-INF/maven/**')
+        }
+        doLast {
+            file(archiveFile).setExecutable(true, false)
+        }
+    }
+
     dependencies {
         implementation project(":jbump")
-        implementation "com.badlogicgames.gdx:gdx:1.9.13"
-        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.9.13"
-        implementation "com.badlogicgames.gdx:gdx-platform:1.9.13:natives-desktop"
+        implementation "com.badlogicgames.gdx:gdx:1.10.0"
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.10.0"
+        implementation "com.badlogicgames.gdx:gdx-platform:1.10.0:natives-desktop"
         implementation "space.earlygrey:shapedrawer:2.4.0"
     }
 }
