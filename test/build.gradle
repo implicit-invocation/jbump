@@ -4,10 +4,17 @@ java.targetCompatibility = JavaVersion.VERSION_1_8
 [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
 sourceCompatibility = 1.8 // lwjgl3 needs this
-sourceSets.main.java.srcDirs = [ "src/" ]
 
 mainClassName = "com.dongbat.jbump.test.TestBump"
 def projectName = 'jbump-test'
+
+dependencies {
+    implementation project(":jbump")
+    implementation "com.badlogicgames.gdx:gdx:1.10.0"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.10.0"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.10.0:natives-desktop"
+    implementation "space.earlygrey:shapedrawer:2.4.0"
+}
 
 def os = System.properties['os.name'].toLowerCase()
 

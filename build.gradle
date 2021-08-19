@@ -36,31 +36,10 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
 }
 
-
 if(JavaVersion.current().isJava9Compatible()) {
     allprojects {
         tasks.withType(JavaCompile) {
             options.release.set(8)
         }
-    }
-}
-
-project(":jbump") {
-    version "$VERSION_NAME"
-    group 'com.github.implicit-invocation'
-}
-
-project(":test") {
-    apply plugin: "java-library"
-
-    version "$VERSION_NAME"
-    group 'com.github.implicit-invocation'
-
-    dependencies {
-        implementation project(":jbump")
-        implementation "com.badlogicgames.gdx:gdx:1.10.0"
-        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.10.0"
-        implementation "com.badlogicgames.gdx:gdx-platform:1.10.0:natives-desktop"
-        implementation "space.earlygrey:shapedrawer:2.4.0"
     }
 }
