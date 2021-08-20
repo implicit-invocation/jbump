@@ -15,7 +15,7 @@
  */
 package com.dongbat.jbump;
 
-import java.util.HashSet;
+import com.dongbat.jbump.util.ObjectSet;
 
 /**
  *
@@ -24,21 +24,38 @@ import java.util.HashSet;
 public class Cell {
   public float x;
   public float y;
-  public HashSet<Item> items = new HashSet<Item>();
+  /**
+   * This class is compared by identity, like {@link Item}, and it also caches its identityHashCode() result.
+   */
+  protected final int identityHash;
+  /**
+   * Stores the Item values in this Cell.
+   * <br>
+   * This uses a different implementation of Set than usual; {@link ObjectSet} reuses its iterators where HashSet does
+   * not, and in general uses less memory. Avoiding GC pressure is important in games, especially those that target
+   * mobile or web platforms, and JBump iterates over these items fairly often, so we don't want to create many
+   * Iterators without needing to. ObjectSet doesn't support nested iteration over the same Set, so that is something to
+   * be aware of. This was a HashSet, but ObjectSet implements about the same API.
+   */
+  public ObjectSet<Item> items = new ObjectSet<>(11);
+
+  /**
+   * Constructs a Cell with a position of 0,0 and no items (it will be empty).
+   * <br>
+   * If you subclass Cell, you should call {@code super()} so the cached identity hash code is stored correctly.
+   */
+  public Cell() {
+    identityHash = System.identityHashCode(this);
+  }
+
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Cell cell = (Cell) o;
-
-    return Float.compare(cell.x, x) == 0 && Float.compare(cell.y, y) == 0;
+    return (this == o);
   }
 
   @Override
   public int hashCode() {
-    return (int)(Float.floatToIntBits(x) * 0xC13FA9A902A6328FL
-            + Float.floatToIntBits(y) * 0x91E10DA5C79E7B1DL >>> 32);
+    return identityHash;
   }
 
 }
