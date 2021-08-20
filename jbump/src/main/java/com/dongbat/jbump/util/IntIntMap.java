@@ -22,7 +22,12 @@ import java.util.Iterator;
  * This has been modified from the libGDX 1.9.10 class of the same name,
  * making small changes to improve GWT compatibility and changing the
  * previously-non-deterministic random-walking, so it now will behave more
- * reliably when the order of entries may matter.
+ * reliably when the order of entries may matter. This class uses cuckoo
+ * hashing, whereas {@link ObjectSet} uses linear probing. Cuckoo hashing
+ * is relatively safe to use for int keys, because it is extremely rare or
+ * impossible for so many keys to collide on the entirety of their low
+ * bits that the hashing fails. This guarantee cannot be said for the
+ * generic Object keys in ObjectSet, so it uses linear probing.
  * @author tao
  */
 public class IntIntMap implements Iterable<IntIntMap.Entry> {
