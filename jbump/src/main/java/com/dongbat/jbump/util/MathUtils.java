@@ -194,15 +194,8 @@ public final class MathUtils {
 	// ---
 
 	/** Returns the next power of two. Returns the specified value if the value is already a power of two. */
-	static public int nextPowerOfTwo (int value) {
-		if (value == 0) return 1;
-		value--;
-		value |= value >> 1;
-		value |= value >> 2;
-		value |= value >> 4;
-		value |= value >> 8;
-		value |= value >> 16;
-		return value + 1;
+	public static int nextPowerOfTwo (int value) {
+		return 1 << -Integer.numberOfLeadingZeros(Math.max(2, value) - 1);
 	}
 
 	static public boolean isPowerOfTwo (int value) {
@@ -218,27 +211,19 @@ public final class MathUtils {
 	}
 
 	static public int clamp (int value, int min, int max) {
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
+		return Math.min(Math.max(value, min), max);
 	}
 
 	static public long clamp (long value, long min, long max) {
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
+		return Math.min(Math.max(value, min), max);
 	}
 
 	static public float clamp (float value, float min, float max) {
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
+		return Math.min(Math.max(value, min), max);
 	}
 
 	static public double clamp (double value, double min, double max) {
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
+		return Math.min(Math.max(value, min), max);
 	}
 
 	// ---

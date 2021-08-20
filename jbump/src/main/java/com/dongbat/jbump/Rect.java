@@ -47,7 +47,7 @@ public class Rect {
   }
   
   /**
-   * This is a generalized implementation of the liang-barsky algorithm, which also returns
+   * This is a generalized implementation of the Liang-Barsky algorithm, which also returns
    * the normals of the sides where the segment intersects.
    * Notice that normals are only guaranteed to be accurate when initially ti1 == -Float.MAX_VALUE, ti2 == Float.MAX_VALUE
    * @return false if the segment never touches the rect
@@ -120,7 +120,7 @@ public class Rect {
   }
   
   /**
-   * Calculates the minkowsky difference between 2 rects, which is another rect
+   * Calculates the Minkowsky difference between 2 rects, which is another rect
    */
   public static void rect_getDiff(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2, Rect result) {
     result.set(x2 - x1 - w1, y2 - y1 - h1, w1 + w2, h1 + h2);

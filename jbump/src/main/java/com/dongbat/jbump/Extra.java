@@ -16,11 +16,16 @@
 package com.dongbat.jbump;
 
 /**
- *
+ * Small helper methods for math tasks, as well as the configurable {@link #DELTA}.
  * @author tao
  */
 public class Extra {
 
+  /**
+   * Used by {@link Rect} and {@link RectHelper} to determine if a float is close
+   * enough to a threshold to count as within that threshold, to counter-act
+   * floating-point imprecision. Defaults to {@code 1e-5f} .
+   */
   public static float DELTA = 1e-5f;
 
   public static int sign(float x) {
