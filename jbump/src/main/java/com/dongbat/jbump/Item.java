@@ -16,14 +16,17 @@
 package com.dongbat.jbump;
 
 /**
- *
+ * Wraps an {@code E} value in {@link #userData}, so it is compared by the identity
+ * of the Item, not the E value. You can freely change the E value; it is not used
+ * for comparison with other Items. The userData can be null.
  * @author tao
  */
 public class Item<E> {
 
   /**
    * This is not ever read by JBump, so this can be anything user code needs it to be.
-   * It isn't considered by {@link #equals(Object)} or by {@link #hashCode()}.
+   * It isn't considered by {@link #equals(Object)} or by {@link #hashCode()}. This
+   * may be null.
    */
   public E userData;
   protected final int identityHash;

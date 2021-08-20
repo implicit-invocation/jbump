@@ -47,8 +47,7 @@ public class IntPoint {
 
   @Override
   public int hashCode() {
-    // Rosenberg-Strong pairing function, only works for non-negative coordinates, may adjust later
-    return (x >= y ? x * (x + 2) - y : y * y + x);
+    return x * 11 + y * 47;
   }
 
   @Override
