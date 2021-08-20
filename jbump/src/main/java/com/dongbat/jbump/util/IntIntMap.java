@@ -18,13 +18,17 @@ package com.dongbat.jbump.util;
 import java.util.Iterator;
 
 /**
- *
+ * A map of primitive int keys to primitive int values.
+ * This has been modified from the libGDX 1.9.10 class of the same name,
+ * making small changes to improve GWT compatibility and changing the
+ * previously-non-deterministic random-walking, so it now will behave more
+ * reliably when the order of entries may matter.
  * @author tao
  */
 public class IntIntMap implements Iterable<IntIntMap.Entry> {
-	private static final int PRIME1 = 0xbe1f14b1;
-	private static final int PRIME2 = 0xb4b82e39;
-	private static final int PRIME3 = 0xced1c241;
+//	private static final int PRIME1 = 0xbec61;//0xbe1f14b1;
+	private static final int PRIME2 = 0xb50d9;//0xb4b82e39;
+	private static final int PRIME3 = 0xc21f1;//0xced1c241;
 	private static final int EMPTY = 0;
 
 	public int size;
@@ -39,9 +43,11 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 	private int stashCapacity;
 	private int pushIterations;
 
-	private Entries entries1, entries2;
-	private Values values1, values2;
-	private Keys keys1, keys2;
+	private transient Entries entries1, entries2;
+	private transient Values values1, values2;
+	private transient Keys keys1, keys2;
+
+	private transient int randomState = 0xbe1f14b1;
 
 	/** Creates a new map with an initial capacity of 51 and a load factor of 0.8. */
 	public IntIntMap () {
@@ -85,6 +91,7 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 		size = map.size;
 		zeroValue = map.zeroValue;
 		hasZeroValue = map.hasZeroValue;
+		randomState = map.randomState;
 	}
 
 	public void put (int key, int value) {
@@ -209,7 +216,7 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 		int i = 0, pushIterations = this.pushIterations;
 		do {
 			// Replace the key and value for one of the hashes.
-			switch (MathUtils.random(2)) {
+			switch (random(3)) {
 			case 0:
 				evictedKey = key1;
 				evictedValue = valueTable[index1];
@@ -517,6 +524,10 @@ public class IntIntMap implements Iterable<IntIntMap.Entry> {
 	private int hash3 (int h) {
 		h *= PRIME3;
 		return (h ^ h >>> hashShift) & mask;
+	}
+
+	private int random(int bound) {
+		return ((randomState = randomState * 0x6ebd3 ^ 0x9E3779BD) >>> 24) * bound >>> 24;
 	}
 
 	public int hashCode () {
