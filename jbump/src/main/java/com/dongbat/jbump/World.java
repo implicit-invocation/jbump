@@ -29,7 +29,6 @@ import static java.lang.Math.min;
  */
 public class World<E> {
 
-//  private final HashMap<Float, HashMap<Float, Cell>> rows = new HashMap<Float, HashMap<Float, Cell>>();
   private final HashMap<Point, Cell> cellMap = new HashMap<Point, Cell>();
   private final HashSet<Cell> nonEmptyCells = new HashSet<Cell>();
   private float cellMinX, cellMinY, cellMaxX, cellMaxY;
