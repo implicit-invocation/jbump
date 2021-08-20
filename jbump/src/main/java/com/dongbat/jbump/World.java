@@ -66,10 +66,7 @@ public class World<E> {
       if (cy > cellMaxY) cellMaxY = cy;
     }
     nonEmptyCells.add(cell);
-    if (!cell.items.contains(item)) {
-      cell.items.add(item);
-      cell.itemCount = cell.itemCount + 1;
-    }
+    cell.items.add(item);
   }
 
   private boolean removeItemFromCell(Item item, float cx, float cy) {
@@ -78,12 +75,10 @@ public class World<E> {
     if(cell == null) {
       return false;
     }
-    if (!cell.items.contains(item)) {
+    if (!cell.items.remove(item)) {
       return false;
     }
-    cell.items.remove(item);
-    cell.itemCount = cell.itemCount - 1;
-    if (cell.itemCount == 0) {
+    if (cell.items.isEmpty()) {
       nonEmptyCells.remove(cell);
     }
     return true;
@@ -95,7 +90,7 @@ public class World<E> {
     for (float cy = ct; cy < ct + ch; cy++, pt.y++) {
       for (float cx = cl; cx < cl + cw; cx++, pt.x++) {
         Cell cell = cellMap.get(pt);
-        if (cell != null && cell.itemCount > 0) { //no cell.itemCount > 1 because tunneling
+        if (cell != null && !cell.items.isEmpty()) { // this is conscious of tunneling
           result.addAll(cell.items);
         }
       }

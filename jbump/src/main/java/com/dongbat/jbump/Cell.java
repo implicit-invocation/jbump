@@ -22,8 +22,23 @@ import java.util.HashSet;
  * @author tao
  */
 public class Cell {
-  public int itemCount = 0;
   public float x;
   public float y;
   public HashSet<Item> items = new HashSet<Item>();
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Cell cell = (Cell) o;
+
+    return Float.compare(cell.x, x) == 0 && Float.compare(cell.y, y) == 0;
+  }
+
+  @Override
+  public int hashCode() {
+    return (int)(Float.floatToIntBits(x) * 0xC13FA9A902A6328FL
+            + Float.floatToIntBits(y) * 0x91E10DA5C79E7B1DL >>> 32);
+  }
+
 }
