@@ -502,7 +502,9 @@ public class ObjectSet<T> implements Iterable<T>, Set<T> {
 			return false;
 		try {
 			return containsAll(s);
-		} catch (ClassCastException | NullPointerException unused) {
+		} catch (ClassCastException unused) {
+			return false;
+		} catch (NullPointerException unused) {
 			return false;
 		}
 	}

@@ -37,7 +37,12 @@ if (JavaVersion.current().isJava8Compatible()) {
 }
 
 if(JavaVersion.current().isJava9Compatible()) {
-    allprojects {
+    project(':jbump') {
+        tasks.withType(JavaCompile) {
+            options.release.set(7)
+        }
+    }
+    project(':test') {
         tasks.withType(JavaCompile) {
             options.release.set(8)
         }
