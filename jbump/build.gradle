@@ -9,7 +9,7 @@ javadoc.destinationDir = file("../docs/apidocs")
 
 [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 if (JavaVersion.current().isJava9Compatible()) {
-    compileJava.targetCompatibility = 8
+    compileJava.targetCompatibility = 6
 }
 
 def projectName = 'jbump'

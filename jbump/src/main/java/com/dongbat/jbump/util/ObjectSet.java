@@ -541,8 +541,8 @@ public class ObjectSet<T> implements Iterable<T>, Set<T> {
 	@Override
 	public ObjectSetIterator<T> iterator () {
 		if (iterator1 == null || iterator2 == null) {
-			iterator1 = new ObjectSetIterator<>(this);
-			iterator2 = new ObjectSetIterator<>(this);
+			iterator1 = new ObjectSetIterator<T>(this);
+			iterator2 = new ObjectSetIterator<T>(this);
 		}
 		if (!iterator1.valid) {
 			iterator1.reset();
@@ -632,7 +632,7 @@ public class ObjectSet<T> implements Iterable<T>, Set<T> {
 		 * Does not change the position of this iterator.
 		 */
 		public ArrayList<T> toList () {
-			ArrayList<T> list = new ArrayList<>(set.size);
+			ArrayList<T> list = new ArrayList<T>(set.size);
 			int currentIdx = currentIndex, nextIdx = nextIndex;
 			boolean hn = hasNext;
 			while (hasNext) { list.add(next()); }
@@ -644,13 +644,13 @@ public class ObjectSet<T> implements Iterable<T>, Set<T> {
 	}
 
 	public static <T> ObjectSet<T> with(T item) {
-		ObjectSet<T> set = new ObjectSet<>(1);
+		ObjectSet<T> set = new ObjectSet<T>(1);
 		set.add(item);
 		return set;
 	}
 
 	@SafeVarargs
 	public static <T> ObjectSet<T> with (T... array) {
-		return new ObjectSet<>(array);
+		return new ObjectSet<T>(array);
 	}
 }

@@ -37,7 +37,7 @@ public class Cell {
    * Iterators without needing to. ObjectSet doesn't support nested iteration over the same Set, so that is something to
    * be aware of. This was a HashSet, but ObjectSet implements about the same API.
    */
-  public ObjectSet<Item> items = new ObjectSet<>(11);
+  public ObjectSet<Item> items = new ObjectSet<Item>(11);
 
   /**
    * Constructs a Cell with a position of 0,0 and no items (it will be empty).
