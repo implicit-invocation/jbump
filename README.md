@@ -221,9 +221,10 @@ World<Entity> world = new World<Entity>(32f);
 `cellSize` represents the size of the sides of the squared cells that will be used internally to provide the data.
 This value defaults to 64f, which is fine for most use. However, it should be set to a multiple of your tile size in 
 world units for tile-based games. For example, if you're using pixel units and your tiles are 32x32 pixels, cellSize 
-could be 32f, 64f, 128f, etc. If you're using meters and your tiles are 1x1 meters, cellSize could be 1f, 2f, 4f. Set 
-this value lower/higher to tweak performance. Note that you do not have to have a tile-based game to use jbump, but the
-cell rules still apply to the world.
+could be 32f, 64f, 128f, etc. If you're using meters and your tiles are 1x1 meters, cellSize could be 1f, 2f, 4f, but 
+some problems have been noted with small cell sizes like these 
+(see https://github.com/implicit-invocation/jbump/issues/4). You can set this value lower/higher to tweak performance. 
+Note that you do not have to have a tile-based game to use jbump, but the cell rules still apply to the world.
 
 ## Querying the World
 
