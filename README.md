@@ -224,7 +224,7 @@ world units for tile-based games. For example, if you're using pixel units and y
 could be 32f, 64f, 128f, etc. If you're using meters and your tiles are 1x1 meters, cellSize could be 1f, 2f, or 4f. 
 Note that some problems have been found with using cell sizes around 1.0f, with the current recommendation being to 
 apply a multiplier to all values to and from the jbump calls (10x is a good one to use, so that all tile sizes are 
-at least in the 10.0f range). You can set the `World` cellSize value lower or higher to tweak performance. Note that 
+at least in the 10.0f range). You can set the `cellSize` value lower or higher to tweak performance. Note that 
 you do not have to have a tile-based game to use jbump, but the cell rules still apply to the world.
 
 ## Querying the World
