@@ -4,7 +4,7 @@ apply plugin: 'com.vanniktech.maven.publish'
 sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-javadoc.options.source("16")
+javadoc.options.source("17")
 javadoc.destinationDir = file("../docs/apidocs")
 
 [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
