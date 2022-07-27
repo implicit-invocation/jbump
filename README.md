@@ -3,7 +3,7 @@
 [![](https://jitpack.io/v/implicit-invocation/jbump.svg)](https://jitpack.io/#implicit-invocation/jbump)  
 jbump is a Java port of bump.lua, a 2D AABB collision detection and response library.  
 Please see the [bump.lua README](https://github.com/kikito/bump.lua/blob/master/README.md) for the original
-documentation.
+documentation, or [the JavaDocs for this library on jitpack.io](https://javadoc.jitpack.io/com/github/implicit-invocation/jbump/1.0.2/javadoc/).
 
 ## Features
 - Simple, fast, and accurate collisions in a lightweight package
