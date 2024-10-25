@@ -43,7 +43,7 @@ public class Rect {
   }
 
   public static void rect_getNearestCorner(float x, float y, float w, float h, float px, float py, Point result) {
-    result.set(nearest(px, x, x + w), nearest(y, y, y + h));
+    result.set(nearest(px, x, x + w), nearest(py, y, y + h));
   }
   
   /**
